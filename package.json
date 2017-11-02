@@ -1,0 +1,46 @@
+{
+  "name": "viswiz-sdk",
+  "description": "The VisWiz.io Node.js SDK",
+  "version": "1.0.0",
+  "main": "sdk.js",
+  "author": "Valentin Agachi <valentin@viswiz.io>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viswiz/viswiz-nodejs-sdk"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.5.0"
+  },
+  "files": [
+    "sdk.js"
+  ],
+  "scripts": {
+    "commitmsg": "validate-commit-msg",
+    "docs": "jsdoc2md --partial docs/main.hbs --helper docs/helpers.js --files sdk.js > Documentation.md",
+    "lint": "eslint . --cache --fix --ignore-pattern '!.eslintrc.js'",
+    "pretty": "prettier --write --list-different \"**/*.js\"",
+    "precommit": "lint-staged",
+    "release": "yarn docs && git add Documentation.md && standard-version -a",
+    "test:jest": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test": "npm run test:jest",
+    "pretest": "npm run lint"
+  },
+  "dependencies": {
+    "form-data": "^2.3.1",
+    "got": "^8.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1",
+    "husky": "^0.14.3",
+    "jest": "^21.2.1",
+    "jsdoc-to-markdown": "^3.0.2",
+    "lint-staged": "^6.0.0",
+    "nock": "^9.1.4",
+    "prettier": "^1.8.2",
+    "standard-version": "^4.2.0",
+    "validate-commit-msg": "^2.14.0"
+  }
+}
