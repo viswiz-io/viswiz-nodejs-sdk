@@ -1,0 +1,8 @@
+before_script:
+  - yarn
+
+test:
+  script:
+    - yarn lint
+    - yarn test
+    - yarn test:coverage
