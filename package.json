@@ -6,7 +6,7 @@
   "author": "Valentin Agachi <valentin@viswiz.io>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/viswiz/viswiz-nodejs-sdk"
+    "url": "https://github.com/viswiz-io/viswiz-nodejs-sdk"
   },
   "license": "MIT",
   "engines": {
