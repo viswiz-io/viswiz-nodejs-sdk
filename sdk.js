@@ -110,21 +110,22 @@ class VisWiz {
 	 * webhooks configured for the account.
 	 *
 	 * @method
-	 * @param {object} body
+	 * @param {object} params
 	 * @returns {Promise}
 	 * @fulfil {object} - The new webhook object
 	 *
 	 * @example
-	 * const webhook = await client.createWebhooks({
+	 * const webhook = await client.createWebhook({
+	 *   name: 'My first webhook',
 	 *   url: 'http://amazing.com/webhook-handler'
 	 * });
 	 */
-	createWebhook(body) {
-		if (!body) {
-			return Promise.reject(new Error('Missing required parameter: body'));
+	createWebhook(params) {
+		if (!params) {
+			return Promise.reject(new Error('Missing required parameter: params'));
 		}
 
-		return this._request('POST', '/webhooks', body, this._getHeaders());
+		return this._request('POST', '/webhooks', params, this._getHeaders());
 	}
 
 	/**
@@ -157,24 +158,24 @@ class VisWiz {
 	 *   url: 'http://github.com/amaze/project'
 	 * });
 	 */
-	createProject(body) {
-		if (!body) {
-			return Promise.reject(new Error('Missing required parameter: body'));
+	createProject(params) {
+		if (!params) {
+			return Promise.reject(new Error('Missing required parameter: params'));
 		}
 
-		return this._request('POST', '/projects', body, this._getHeaders());
+		return this._request('POST', '/projects', params, this._getHeaders());
 	}
 
 	/**
 	 * Get a list of all the builds for a project.
 	 *
 	 * @method
-	 * @param {integer} projectID - The requested project ID
+	 * @param {string} projectID - The requested project ID
 	 * @returns {Promise}
 	 * @fulfil {array<object>} - The list of builds objects
 	 *
 	 * @example
-	 * const builds = await client.getBuilds(123);
+	 * const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');
 	 */
 	getBuilds(projectID) {
 		if (!projectID) {
@@ -192,13 +193,14 @@ class VisWiz {
 	 * Create a new build for a project.
 	 *
 	 * @method
-	 * @param {object} params - The request params
-	 * @param {integer} params.projectID - The requested project ID
+	 * @param {object} params
+	 * @param {string} params.projectID - The requested project ID
 	 * @returns {Promise}
 	 * @fulfil {object} - The new build object
 	 *
 	 * @example
 	 * const build = await client.createBuild({
+	 *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',
 	 *   name: 'New amazing changes',
 	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
 	 * });
@@ -208,8 +210,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		let path = '/projects/{projectID}/builds';
-		path = path.replace('{projectID}', params.projectID);
+		const path = `/projects/${params.projectID}/builds`;
 
 		delete params.projectID;
 
@@ -220,11 +221,11 @@ class VisWiz {
 	 * Finish a build when all images have been created. This triggers the actual build comparison to execute.
 	 *
 	 * @method
-	 * @param {integer} buildID - The requested build ID
+	 * @param {string} buildID - The requested build ID
 	 * @returns {Promise}
 	 *
 	 * @example
-	 * await client.finishBuild(4567);
+	 * await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');
 	 */
 	finishBuild(buildID) {
 		if (!buildID) {
@@ -240,12 +241,12 @@ class VisWiz {
 	 * Get the results for a build which has been compared to another build.
 	 *
 	 * @method
-	 * @param {integer} buildID - The requested build ID
+	 * @param {string} buildID - The requested build ID
 	 * @returns {Promise}
 	 * @fulfil {object} - The build results object
 	 *
 	 * @example
-	 * const buildResults = await client.getBuildResults(4567);
+	 * const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');
 	 */
 	getBuildResults(buildID) {
 		if (!buildID) {
@@ -261,12 +262,12 @@ class VisWiz {
 	 * Get a list of all images for a build.
 	 *
 	 * @method
-	 * @param {integer} buildID - The requested build ID
+	 * @param {string} buildID - The requested build ID
 	 * @returns {Promise}
 	 * @fulfil {array<object>} - The list of images objects
 	 *
 	 * @example
-	 * const images = await client.getImages(4567);
+	 * const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');
 	 */
 	getImages(buildID) {
 		if (!buildID) {
@@ -282,14 +283,14 @@ class VisWiz {
 	 * Upload a new image for a build. This endpoint accepts only one PNG image per request.
 	 *
 	 * @method
-	 * @param {integer} buildID - The requested build ID
+	 * @param {string} buildID - The requested build ID
 	 * @param {string} name - The image name
 	 * @param {string} filePath - The image file path
 	 * @returns {Promise}
 	 * @fulfil {object} - The new image object
 	 *
 	 * @example
-	 * const image = await client.createImage(4567, 'image-name', '/path/to/image.png');
+	 * const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');
 	 */
 	createImage(buildID, name, filePath) {
 		if (!buildID) {
@@ -302,7 +303,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: filePath'));
 		}
 		if (!fs.existsSync(filePath)) {
-			return Promise.reject(new Error('Missing file: ' + filePath));
+			return Promise.reject(new Error('File not found: ' + filePath));
 		}
 
 		const path = `/builds/${buildID}/images`;

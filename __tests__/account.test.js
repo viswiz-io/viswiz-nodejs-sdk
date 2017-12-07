@@ -103,5 +103,12 @@ describe('account methods', () => {
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
+
+		it('rejects on missing data', () => {
+			return instance.createWebhook().catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('params');
+			});
+		});
 	});
 });

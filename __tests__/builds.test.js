@@ -48,6 +48,7 @@ describe('builds methods', () => {
 		it('rejects on bad input', () => {
 			return instance.getBuilds().catch(err => {
 				expect(err).toBeTruthy();
+				expect(err.message).toMatch('projectID');
 			});
 		});
 	});
@@ -91,6 +92,7 @@ describe('builds methods', () => {
 		it('rejects on bad input', () => {
 			return instance.createBuild().catch(err => {
 				expect(err).toBeTruthy();
+				expect(err.message).toMatch('projectID');
 			});
 		});
 	});
@@ -121,6 +123,7 @@ describe('builds methods', () => {
 		it('rejects on bad input', () => {
 			return instance.finishBuild().catch(err => {
 				expect(err).toBeTruthy();
+				expect(err.message).toMatch('buildID');
 			});
 		});
 	});
@@ -156,6 +159,7 @@ describe('builds methods', () => {
 		it('rejects on bad input', () => {
 			return instance.getBuildResults().catch(err => {
 				expect(err).toBeTruthy();
+				expect(err.message).toMatch('buildID');
 			});
 		});
 	});

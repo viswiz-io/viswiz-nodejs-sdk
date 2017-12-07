@@ -48,6 +48,7 @@ describe('images methods', () => {
 		it('rejects on bad input', () => {
 			return instance.getImages().catch(err => {
 				expect(err).toBeTruthy();
+				expect(err.message).toMatch('buildID');
 			});
 		});
 	});
@@ -90,11 +91,33 @@ describe('images methods', () => {
 			});
 		});
 
-		it('rejects on missing file', () => {
+		it('rejects on missing buildID', () => {
+			return instance.createImage(null, 'foo', filePath).catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('buildID');
+			});
+		});
+
+		it('rejects on missing name', () => {
+			return instance.createImage(buildID, null, filePath).catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('name');
+			});
+		});
+
+		it('rejects on missing filePath', () => {
+			return instance.createImage(buildID, 'foo', null).catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('filePath');
+			});
+		});
+
+		it('rejects on non-existent file', () => {
 			return instance
 				.createImage(buildID, 'foo', '/tmp/bogus.123456')
 				.catch(err => {
 					expect(err).toBeTruthy();
+					expect(err.message).toMatch('File not found');
 				});
 		});
 	});

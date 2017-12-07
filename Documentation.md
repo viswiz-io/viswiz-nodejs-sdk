@@ -13,7 +13,7 @@ The SDK allows you to query and create new projects, builds or images within the
     * [new VisWiz(apiKey, [options])](#new_VisWiz_new)
     * [.getAccount()](#VisWiz+getAccount) ⇒ <code>Promise</code>
     * [.getWebhooks()](#VisWiz+getWebhooks) ⇒ <code>Promise</code>
-    * [.createWebhook(body)](#VisWiz+createWebhook) ⇒ <code>Promise</code>
+    * [.createWebhook(params)](#VisWiz+createWebhook) ⇒ <code>Promise</code>
     * [.getProjects()](#VisWiz+getProjects) ⇒ <code>Promise</code>
     * [.createProject(body)](#VisWiz+createProject) ⇒ <code>Promise</code>
     * [.getBuilds(projectID)](#VisWiz+getBuilds) ⇒ <code>Promise</code>
@@ -61,7 +61,7 @@ const webhooks = await client.getWebhooks();
 ```
 <a name="VisWiz+createWebhook"></a>
 
-### client.createWebhook(body) ⇒ <code>Promise</code>
+### client.createWebhook(params) ⇒ <code>Promise</code>
 When a build comparison is finished a POST HTTP request will be triggered towards all
 webhooks configured for the account.
 
@@ -70,11 +70,12 @@ webhooks configured for the account.
 
 | Param | Type |
 | --- | --- |
-| body | <code>object</code> | 
+| params | <code>object</code> | 
 
 **Example**  
 ```js
-const webhook = await client.createWebhooks({
+const webhook = await client.createWebhook({
+  name: 'My first webhook',
   url: 'http://amazing.com/webhook-handler'
 });
 ```
@@ -118,11 +119,11 @@ Get a list of all the builds for a project.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| projectID | <code>integer</code> | The requested project ID |
+| projectID | <code>string</code> | The requested project ID |
 
 **Example**  
 ```js
-const builds = await client.getBuilds(123);
+const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');
 ```
 <a name="VisWiz+createBuild"></a>
 
@@ -134,12 +135,13 @@ Create a new build for a project.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| params | <code>object</code> | The request params |
-| params.projectID | <code>integer</code> | The requested project ID |
+| params | <code>object</code> |  |
+| params.projectID | <code>string</code> | The requested project ID |
 
 **Example**  
 ```js
 const build = await client.createBuild({
+  projectID: 'mwwuciQG7ETAmKoyRHgkGg',
   name: 'New amazing changes',
   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
 });
@@ -153,11 +155,11 @@ Finish a build when all images have been created. This triggers the actual build
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buildID | <code>integer</code> | The requested build ID |
+| buildID | <code>string</code> | The requested build ID |
 
 **Example**  
 ```js
-await client.finishBuild(4567);
+await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');
 ```
 <a name="VisWiz+getBuildResults"></a>
 
@@ -169,11 +171,11 @@ Get the results for a build which has been compared to another build.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buildID | <code>integer</code> | The requested build ID |
+| buildID | <code>string</code> | The requested build ID |
 
 **Example**  
 ```js
-const buildResults = await client.getBuildResults(4567);
+const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');
 ```
 <a name="VisWiz+getImages"></a>
 
@@ -185,11 +187,11 @@ Get a list of all images for a build.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buildID | <code>integer</code> | The requested build ID |
+| buildID | <code>string</code> | The requested build ID |
 
 **Example**  
 ```js
-const images = await client.getImages(4567);
+const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');
 ```
 <a name="VisWiz+createImage"></a>
 
@@ -201,14 +203,14 @@ Upload a new image for a build. This endpoint accepts only one PNG image per req
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buildID | <code>integer</code> | The requested build ID |
+| buildID | <code>string</code> | The requested build ID |
 | name | <code>string</code> | The image name |
 | filePath | <code>string</code> | The image file path |
 
 **Example**  
 ```js
-const image = await client.createImage(4567, 'image-name', '/path/to/image.png');
+const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');
 ```
 ---
 
-Documentation generated on **Mon, 04 Dec 2017 17:29:56 GMT**
+Documentation generated on **Thu, 07 Dec 2017 12:18:37 GMT**

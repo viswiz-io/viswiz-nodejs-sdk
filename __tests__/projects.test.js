@@ -73,5 +73,12 @@ describe('projects methods', () => {
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
+
+		it('rejects on missing data', () => {
+			return instance.createProject().catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('params');
+			});
+		});
 	});
 });
