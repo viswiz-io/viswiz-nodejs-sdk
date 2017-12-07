@@ -213,4 +213,4 @@ const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '
 ```
 ---
 
-Documentation generated on **Thu, 07 Dec 2017 12:22:00 GMT**
+Documentation generated on **Thu, 07 Dec 2017 12:25:48 GMT**
