@@ -13,16 +13,16 @@ VisWiz service.
 
 ## Installation
 
-Install the SDK module using `npm`:
-
-```
-$ npm install -D viswiz-sdk
-```
-
-or using `yarn`:
+Install the SDK module using `yarn`:
 
 ```
 $ yarn add -D viswiz-sdk
+```
+
+Or using `npm`:
+
+```
+$ npm install -D viswiz-sdk
 ```
 
 ## Usage
@@ -35,18 +35,18 @@ const VisWiz = require('viswiz-sdk');
 const client = new VisWiz('your-unique-api-key-here');
 
 client
-  .getProjects()
-  .then(projects => projects.find(project => project.name === 'Foo'))
-  .then(project =>
-    client.createBuild({
-      projectID: project.id,
-      name: 'Foo Bar',
-      revision: 'abcdef1234567890',
-    })
-  )
-  .then(build =>
-    client.createImage(build.id, 'image-name', '/path/to/image.png')
-  );
+	.getProjects()
+	.then(projects => projects.find(project => project.name === 'Foo'))
+	.then(project =>
+		client.createBuild({
+			projectID: project.id,
+			name: 'Foo Bar',
+			revision: 'abcdef1234567890',
+		})
+	)
+	.then(build =>
+		client.createImage(build.id, 'image-name', '/path/to/image.png')
+	);
 ```
 
 Using `async`/`await`:
@@ -55,18 +55,18 @@ Using `async`/`await`:
 const VisWiz = require('viswiz-sdk');
 
 async function run() {
-  const client = new VisWiz('your-unique-api-key-here');
+	const client = new VisWiz('your-unique-api-key-here');
 
-  const projects = await client.getProjects();
-  const project = projects.find(project => project.name === 'Foo');
+	const projects = await client.getProjects();
+	const project = projects.find(project => project.name === 'Foo');
 
-  const build = await client.createBuild({
-    projectID: project.id,
-    name: 'Foo Bar',
-    revision: 'abcdef1234567890',
-  });
+	const build = await client.createBuild({
+		projectID: project.id,
+		name: 'Foo Bar',
+		revision: 'abcdef1234567890',
+	});
 
-  await client.createImage(build.id, 'image-name', '/path/to/image.png');
+	await client.createImage(build.id, 'image-name', '/path/to/image.png');
 }
 
 run();
@@ -74,14 +74,18 @@ run();
 
 ## Documentation
 
-See the JSDoc markdown documentation in [Documentation.md](Documentation.md).
+See the JSDoc markdown documentation in
+[Documentation.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/Documentation.md#readme).
 
 ## Change log
 
-The change log can be found here: [CHANGELOG.md](CHANGELOG.md).
+The change log can be found here:
+[CHANGELOG.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/CHANGELOG.md#readme).
 
 ## Authors and license
 
 Author: [VisWiz.io](https://www.viswiz.io/).
 
-MIT License, see the included [License.md](License.md) file.
+MIT License, see the included
+[License.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/License.md)
+file.
