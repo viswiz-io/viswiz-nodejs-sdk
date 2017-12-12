@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-	value: true,
+	value: true
 });
 
 var _fs = require('fs');
@@ -20,44 +20,42 @@ var _package = require('./package.json');
 
 var _package2 = _interopRequireDefault(_package);
 
-function _interopRequireDefault(obj) {
-	return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const SERVER_URL = 'https://api.viswiz.io';
 
 class VisWiz {
 	/**
-	 * @class VisWiz
-	 * @typicalname client
-	 * @param {string} apiKey - The API Key value for a VisWiz.io account
-	 * @param {object} [options]
-	 * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
-	 *
-	 * @example
-	 * const client = new VisWiz('your-unique-api-key-here');
-	 */
+  * @class VisWiz
+  * @typicalname client
+  * @param {string} apiKey - The API Key value for a VisWiz.io account
+  * @param {object} [options]
+  * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
+  *
+  * @example
+  * const client = new VisWiz('your-unique-api-key-here');
+  */
 	constructor(apiKey, options) {
 		this.apiKey = apiKey || 'MISSING';
-		this.server = (options && options.server) || SERVER_URL;
+		this.server = options && options.server || SERVER_URL;
 	}
 
 	/**
-	 * Execute a HTTP request
-	 *
-	 * @private
-	 * @param {string} method - http method
-	 * @param {string} path - path for the request
-	 * @param {object} body - body parameters / object
-	 * @param {object} [headers] - header parameters
-	 */
+  * Execute a HTTP request
+  *
+  * @private
+  * @param {string} method - http method
+  * @param {string} path - path for the request
+  * @param {object} body - body parameters / object
+  * @param {object} [headers] - header parameters
+  */
 	_request(method, path, body, headers) {
 		const url = this.server + path;
 		const options = {
 			body,
 			headers,
 			json: typeof body === 'object' && !(body instanceof _formData2.default),
-			method,
+			method
 		};
 
 		return (0, _got2.default)(url, options).then(response => {
@@ -77,70 +75,63 @@ class VisWiz {
 	}
 
 	/**
-	 * Get the list of required headers for an API request
-	 *
-	 * @private
-	 * @param {object} [additionalHeaders={}] - headers object
-	 */
+  * Get the list of required headers for an API request
+  *
+  * @private
+  * @param {object} [additionalHeaders={}] - headers object
+  */
 	_getHeaders(additionalHeaders) {
-		return Object.assign(
-			{
-				Accept: 'application/json',
-				Authorization: 'Bearer ' + this.apiKey,
-				'Content-Type': 'application/json',
-				'User-Agent': `viswiz-nodejs-sdk/${_package2.default.version} (${
-					_package2.default.repository.url
-				})`,
-			},
-			additionalHeaders || {}
-		);
+		return Object.assign({
+			Accept: 'application/json',
+			Authorization: 'Bearer ' + this.apiKey,
+			'Content-Type': 'application/json',
+			'User-Agent': `viswiz-nodejs-sdk/${_package2.default.version} (${_package2.default.repository.url})`
+		}, additionalHeaders || {});
 	}
 
 	/**
-	 * Get the current account information
-	 *
-	 * @method
-	 * @returns {Promise}
-	 * @fulfil {object} - The current account object
-	 *
-	 * @example
-	 * const account = await client.getAccount();
-	 */
+  * Get the current account information
+  *
+  * @method
+  * @returns {Promise}
+  * @fulfil {object} - The current account object
+  *
+  * @example
+  * const account = await client.getAccount();
+  */
 	getAccount() {
 		return this._request('GET', '/account', null, this._getHeaders());
 	}
 
 	/**
-	 * Get the list of webhooks configured for the account.
-	 *
-	 * @method
-	 * @returns {Promise}
-	 * @fulfil {array<object>} - The list of webhooks objects
-	 *
-	 * @example
-	 * const webhooks = await client.getWebhooks();
-	 */
+  * Get the list of webhooks configured for the account.
+  *
+  * @method
+  * @returns {Promise}
+  * @fulfil {array<object>} - The list of webhooks objects
+  *
+  * @example
+  * const webhooks = await client.getWebhooks();
+  */
 	getWebhooks() {
-		return this._request('GET', '/webhooks', null, this._getHeaders()).then(
-			results => results.webhooks
-		);
+		return this._request('GET', '/webhooks', null, this._getHeaders()).then(results => results.webhooks);
 	}
 
 	/**
-	 * When a build comparison is finished a POST HTTP request will be triggered towards all
-	 * webhooks configured for the account.
-	 *
-	 * @method
-	 * @param {object} params
-	 * @returns {Promise}
-	 * @fulfil {object} - The new webhook object
-	 *
-	 * @example
-	 * const webhook = await client.createWebhook({
-	 *   name: 'My first webhook',
-	 *   url: 'http://amazing.com/webhook-handler'
-	 * });
-	 */
+  * When a build comparison is finished a POST HTTP request will be triggered towards all
+  * webhooks configured for the account.
+  *
+  * @method
+  * @param {object} params
+  * @returns {Promise}
+  * @fulfil {object} - The new webhook object
+  *
+  * @example
+  * const webhook = await client.createWebhook({
+  *   name: 'My first webhook',
+  *   url: 'http://amazing.com/webhook-handler'
+  * });
+  */
 	createWebhook(params) {
 		if (!params) {
 			return Promise.reject(new Error('Missing required parameter: params'));
@@ -150,35 +141,33 @@ class VisWiz {
 	}
 
 	/**
-	 * Get a list of all the projects for the account.
-	 *
-	 * @method
-	 * @returns {Promise}
-	 * @fulfil {array<object>} - The list of projects objects
-	 *
-	 * @example
-	 * const projects = await client.getProjects();
-	 */
+  * Get a list of all the projects for the account.
+  *
+  * @method
+  * @returns {Promise}
+  * @fulfil {array<object>} - The list of projects objects
+  *
+  * @example
+  * const projects = await client.getProjects();
+  */
 	getProjects() {
-		return this._request('GET', '/projects', null, this._getHeaders()).then(
-			results => results.projects
-		);
+		return this._request('GET', '/projects', null, this._getHeaders()).then(results => results.projects);
 	}
 
 	/**
-	 * Create a new project for the account.
-	 *
-	 * @method
-	 * @param {object} params
-	 * @returns {Promise}
-	 * @fulfil {object} - The new project object
-	 *
-	 * @example
-	 * const project = await client.createProject({
-	 *   name: 'My Amazing Project',
-	 *   url: 'http://github.com/amaze/project'
-	 * });
-	 */
+  * Create a new project for the account.
+  *
+  * @method
+  * @param {object} params
+  * @returns {Promise}
+  * @fulfil {object} - The new project object
+  *
+  * @example
+  * const project = await client.createProject({
+  *   name: 'My Amazing Project',
+  *   url: 'http://github.com/amaze/project'
+  * });
+  */
 	createProject(params) {
 		if (!params) {
 			return Promise.reject(new Error('Missing required parameter: params'));
@@ -188,16 +177,16 @@ class VisWiz {
 	}
 
 	/**
-	 * Get a list of all the builds for a project.
-	 *
-	 * @method
-	 * @param {string} projectID - The requested project ID
-	 * @returns {Promise}
-	 * @fulfil {array<object>} - The list of builds objects
-	 *
-	 * @example
-	 * const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');
-	 */
+  * Get a list of all the builds for a project.
+  *
+  * @method
+  * @param {string} projectID - The requested project ID
+  * @returns {Promise}
+  * @fulfil {array<object>} - The list of builds objects
+  *
+  * @example
+  * const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');
+  */
 	getBuilds(projectID) {
 		if (!projectID) {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
@@ -205,27 +194,25 @@ class VisWiz {
 
 		const path = `/projects/${projectID}/builds`;
 
-		return this._request('GET', path, null, this._getHeaders()).then(
-			results => results.builds
-		);
+		return this._request('GET', path, null, this._getHeaders()).then(results => results.builds);
 	}
 
 	/**
-	 * Create a new build for a project.
-	 *
-	 * @method
-	 * @param {object} params
-	 * @param {string} params.projectID - The requested project ID
-	 * @returns {Promise}
-	 * @fulfil {object} - The new build object
-	 *
-	 * @example
-	 * const build = await client.createBuild({
-	 *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',
-	 *   name: 'New amazing changes',
-	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
-	 * });
-	 */
+  * Create a new build for a project.
+  *
+  * @method
+  * @param {object} params
+  * @param {string} params.projectID - The requested project ID
+  * @returns {Promise}
+  * @fulfil {object} - The new build object
+  *
+  * @example
+  * const build = await client.createBuild({
+  *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',
+  *   name: 'New amazing changes',
+  *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
+  * });
+  */
 	createBuild(params) {
 		if (!params || !params.projectID) {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
@@ -239,15 +226,15 @@ class VisWiz {
 	}
 
 	/**
-	 * Finish a build when all images have been created. This triggers the actual build comparison to execute.
-	 *
-	 * @method
-	 * @param {string} buildID - The requested build ID
-	 * @returns {Promise}
-	 *
-	 * @example
-	 * await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');
-	 */
+  * Finish a build when all images have been created. This triggers the actual build comparison to execute.
+  *
+  * @method
+  * @param {string} buildID - The requested build ID
+  * @returns {Promise}
+  *
+  * @example
+  * await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');
+  */
 	finishBuild(buildID) {
 		if (!buildID) {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
@@ -259,16 +246,16 @@ class VisWiz {
 	}
 
 	/**
-	 * Get the results for a build which has been compared to another build.
-	 *
-	 * @method
-	 * @param {string} buildID - The requested build ID
-	 * @returns {Promise}
-	 * @fulfil {object} - The build results object
-	 *
-	 * @example
-	 * const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');
-	 */
+  * Get the results for a build which has been compared to another build.
+  *
+  * @method
+  * @param {string} buildID - The requested build ID
+  * @returns {Promise}
+  * @fulfil {object} - The build results object
+  *
+  * @example
+  * const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');
+  */
 	getBuildResults(buildID) {
 		if (!buildID) {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
@@ -280,16 +267,16 @@ class VisWiz {
 	}
 
 	/**
-	 * Get a list of all images for a build.
-	 *
-	 * @method
-	 * @param {string} buildID - The requested build ID
-	 * @returns {Promise}
-	 * @fulfil {array<object>} - The list of images objects
-	 *
-	 * @example
-	 * const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');
-	 */
+  * Get a list of all images for a build.
+  *
+  * @method
+  * @param {string} buildID - The requested build ID
+  * @returns {Promise}
+  * @fulfil {array<object>} - The list of images objects
+  *
+  * @example
+  * const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');
+  */
 	getImages(buildID) {
 		if (!buildID) {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
@@ -301,18 +288,18 @@ class VisWiz {
 	}
 
 	/**
-	 * Upload a new image for a build. This endpoint accepts only one PNG image per request.
-	 *
-	 * @method
-	 * @param {string} buildID - The requested build ID
-	 * @param {string} name - The image name
-	 * @param {string} filePath - The image file path
-	 * @returns {Promise}
-	 * @fulfil {object} - The new image object
-	 *
-	 * @example
-	 * const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');
-	 */
+  * Upload a new image for a build. This endpoint accepts only one PNG image per request.
+  *
+  * @method
+  * @param {string} buildID - The requested build ID
+  * @param {string} name - The image name
+  * @param {string} filePath - The image file path
+  * @returns {Promise}
+  * @fulfil {object} - The new image object
+  *
+  * @example
+  * const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');
+  */
 	createImage(buildID, name, filePath) {
 		if (!buildID) {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
@@ -333,12 +320,7 @@ class VisWiz {
 		form.append('name', name);
 		form.append('image', _fs2.default.createReadStream(filePath));
 
-		return this._request(
-			'POST',
-			path,
-			form,
-			this._getHeaders(form.getHeaders())
-		);
+		return this._request('POST', path, form, this._getHeaders(form.getHeaders()));
 	}
 }
 
