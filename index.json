@@ -1,0 +1,813 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "viswiz-nodejs-sdk/sdk.js",
+    "content": "import fs from 'fs';\nimport FormData from 'form-data';\nimport got from 'got';\nimport pkg from './package.json';\n\nconst SERVER_URL = 'https://api.viswiz.io';\n\nclass VisWiz {\n\t/**\n\t * @class VisWiz\n\t * @typicalname client\n\t * @param {string} apiKey - The API Key value for a VisWiz.io account\n\t * @param {object} [options]\n\t * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests\n\t *\n\t * @example\n\t * const client = new VisWiz('your-unique-api-key-here');\n\t */\n\tconstructor(apiKey, options) {\n\t\tthis.apiKey = apiKey || 'MISSING';\n\t\tthis.server = (options && options.server) || SERVER_URL;\n\t}\n\n\t/**\n\t * Execute a HTTP request\n\t *\n\t * @private\n\t * @param {string} method - http method\n\t * @param {string} path - path for the request\n\t * @param {object} body - body parameters / object\n\t * @param {object} [headers] - header parameters\n\t */\n\t_request(method, path, body, headers) {\n\t\tconst url = this.server + path;\n\t\tconst options = {\n\t\t\tbody,\n\t\t\theaders,\n\t\t\tjson: typeof body === 'object' && !(body instanceof FormData),\n\t\t\tmethod,\n\t\t};\n\n\t\treturn got(url, options).then(response => {\n\t\t\tconst { body } = response;\n\t\t\tlet parsed = body;\n\n\t\t\tif (!options.json) {\n\t\t\t\ttry {\n\t\t\t\t\tparsed = JSON.parse(body);\n\t\t\t\t} catch (err) {\n\t\t\t\t\t// Nothing to do here\n\t\t\t\t}\n\t\t\t}\n\n\t\t\treturn parsed;\n\t\t});\n\t}\n\n\t/**\n\t * Get the list of required headers for an API request\n\t *\n\t * @private\n\t * @param {object} [additionalHeaders={}] - headers object\n\t */\n\t_getHeaders(additionalHeaders) {\n\t\treturn Object.assign(\n\t\t\t{\n\t\t\t\tAccept: 'application/json',\n\t\t\t\tAuthorization: 'Bearer ' + this.apiKey,\n\t\t\t\t'Content-Type': 'application/json',\n\t\t\t\t'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${\n\t\t\t\t\tpkg.repository.url\n\t\t\t\t})`,\n\t\t\t},\n\t\t\tadditionalHeaders || {}\n\t\t);\n\t}\n\n\t/**\n\t * Get the current account information\n\t *\n\t * @method\n\t * @returns {Promise}\n\t * @fulfil {object} - The current account object\n\t *\n\t * @example\n\t * const account = await client.getAccount();\n\t */\n\tgetAccount() {\n\t\treturn this._request('GET', '/account', null, this._getHeaders());\n\t}\n\n\t/**\n\t * Get the list of webhooks configured for the account.\n\t *\n\t * @method\n\t * @returns {Promise}\n\t * @fulfil {array<object>} - The list of webhooks objects\n\t *\n\t * @example\n\t * const webhooks = await client.getWebhooks();\n\t */\n\tgetWebhooks() {\n\t\treturn this._request('GET', '/webhooks', null, this._getHeaders()).then(\n\t\t\tresults => results.webhooks\n\t\t);\n\t}\n\n\t/**\n\t * When a build comparison is finished a POST HTTP request will be triggered towards all\n\t * webhooks configured for the account.\n\t *\n\t * @method\n\t * @param {object} params\n\t * @returns {Promise}\n\t * @fulfil {object} - The new webhook object\n\t *\n\t * @example\n\t * const webhook = await client.createWebhook({\n\t *   name: 'My first webhook',\n\t *   url: 'http://amazing.com/webhook-handler'\n\t * });\n\t */\n\tcreateWebhook(params) {\n\t\tif (!params) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: params'));\n\t\t}\n\n\t\treturn this._request('POST', '/webhooks', params, this._getHeaders());\n\t}\n\n\t/**\n\t * Get a list of all the projects for the account.\n\t *\n\t * @method\n\t * @returns {Promise}\n\t * @fulfil {array<object>} - The list of projects objects\n\t *\n\t * @example\n\t * const projects = await client.getProjects();\n\t */\n\tgetProjects() {\n\t\treturn this._request('GET', '/projects', null, this._getHeaders()).then(\n\t\t\tresults => results.projects\n\t\t);\n\t}\n\n\t/**\n\t * Create a new project for the account.\n\t *\n\t * @method\n\t * @param {object} params\n\t * @returns {Promise}\n\t * @fulfil {object} - The new project object\n\t *\n\t * @example\n\t * const project = await client.createProject({\n\t *   name: 'My Amazing Project',\n\t *   url: 'http://github.com/amaze/project'\n\t * });\n\t */\n\tcreateProject(params) {\n\t\tif (!params) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: params'));\n\t\t}\n\n\t\treturn this._request('POST', '/projects', params, this._getHeaders());\n\t}\n\n\t/**\n\t * Get a list of all the builds for a project.\n\t *\n\t * @method\n\t * @param {string} projectID - The requested project ID\n\t * @returns {Promise}\n\t * @fulfil {array<object>} - The list of builds objects\n\t *\n\t * @example\n\t * const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');\n\t */\n\tgetBuilds(projectID) {\n\t\tif (!projectID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: projectID'));\n\t\t}\n\n\t\tconst path = `/projects/${projectID}/builds`;\n\n\t\treturn this._request('GET', path, null, this._getHeaders()).then(\n\t\t\tresults => results.builds\n\t\t);\n\t}\n\n\t/**\n\t * Create a new build for a project.\n\t *\n\t * @method\n\t * @param {object} params\n\t * @param {string} params.projectID - The requested project ID\n\t * @returns {Promise}\n\t * @fulfil {object} - The new build object\n\t *\n\t * @example\n\t * const build = await client.createBuild({\n\t *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',\n\t *   name: 'New amazing changes',\n\t *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'\n\t * });\n\t */\n\tcreateBuild(params) {\n\t\tif (!params || !params.projectID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: projectID'));\n\t\t}\n\n\t\tconst path = `/projects/${params.projectID}/builds`;\n\n\t\tdelete params.projectID;\n\n\t\treturn this._request('POST', path, params, this._getHeaders());\n\t}\n\n\t/**\n\t * Finish a build when all images have been created. This triggers the actual build comparison to execute.\n\t *\n\t * @method\n\t * @param {string} buildID - The requested build ID\n\t * @returns {Promise}\n\t *\n\t * @example\n\t * await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');\n\t */\n\tfinishBuild(buildID) {\n\t\tif (!buildID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: buildID'));\n\t\t}\n\n\t\tconst path = `/builds/${buildID}/finish`;\n\n\t\treturn this._request('POST', path, null, this._getHeaders());\n\t}\n\n\t/**\n\t * Get the results for a build which has been compared to another build.\n\t *\n\t * @method\n\t * @param {string} buildID - The requested build ID\n\t * @returns {Promise}\n\t * @fulfil {object} - The build results object\n\t *\n\t * @example\n\t * const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');\n\t */\n\tgetBuildResults(buildID) {\n\t\tif (!buildID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: buildID'));\n\t\t}\n\n\t\tconst path = `/builds/${buildID}/results`;\n\n\t\treturn this._request('GET', path, null, this._getHeaders());\n\t}\n\n\t/**\n\t * Get a list of all images for a build.\n\t *\n\t * @method\n\t * @param {string} buildID - The requested build ID\n\t * @returns {Promise}\n\t * @fulfil {array<object>} - The list of images objects\n\t *\n\t * @example\n\t * const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');\n\t */\n\tgetImages(buildID) {\n\t\tif (!buildID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: buildID'));\n\t\t}\n\n\t\tconst path = `/builds/${buildID}/images`;\n\n\t\treturn this._request('GET', path, null, this._getHeaders());\n\t}\n\n\t/**\n\t * Upload a new image for a build. This endpoint accepts only one PNG image per request.\n\t *\n\t * @method\n\t * @param {string} buildID - The requested build ID\n\t * @param {string} name - The image name\n\t * @param {string} filePath - The image file path\n\t * @returns {Promise}\n\t * @fulfil {object} - The new image object\n\t *\n\t * @example\n\t * const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');\n\t */\n\tcreateImage(buildID, name, filePath) {\n\t\tif (!buildID) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: buildID'));\n\t\t}\n\t\tif (!name) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: name'));\n\t\t}\n\t\tif (!filePath) {\n\t\t\treturn Promise.reject(new Error('Missing required parameter: filePath'));\n\t\t}\n\t\tif (!fs.existsSync(filePath)) {\n\t\t\treturn Promise.reject(new Error('File not found: ' + filePath));\n\t\t}\n\n\t\tconst path = `/builds/${buildID}/images`;\n\n\t\tconst form = new FormData();\n\t\tform.append('name', name);\n\t\tform.append('image', fs.createReadStream(filePath));\n\n\t\treturn this._request(\n\t\t\t'POST',\n\t\t\tpath,\n\t\t\tform,\n\t\t\tthis._getHeaders(form.getHeaders())\n\t\t);\n\t}\n}\n\nexport default VisWiz;\n",
+    "static": true,
+    "longname": "/home/travis/build/viswiz-io/viswiz-nodejs-sdk/sdk.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "name": "SERVER_URL",
+    "memberof": "viswiz-nodejs-sdk/sdk.js",
+    "static": true,
+    "longname": "viswiz-nodejs-sdk/sdk.js~SERVER_URL",
+    "access": "public",
+    "export": false,
+    "importPath": "viswiz-sdk",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 2,
+    "kind": "class",
+    "name": "VisWiz",
+    "memberof": "viswiz-nodejs-sdk/sdk.js",
+    "static": true,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "access": "public",
+    "export": true,
+    "importPath": "viswiz-sdk",
+    "importStyle": "VisWiz",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "__docId__": 3,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#constructor",
+    "access": "public",
+    "description": "",
+    "examples": [
+      "const client = new VisWiz('your-unique-api-key-here');"
+    ],
+    "lineNumber": 19,
+    "unknown": [
+      {
+        "tagName": "@class",
+        "tagValue": "VisWiz"
+      },
+      {
+        "tagName": "@typicalname",
+        "tagValue": "client"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "apiKey",
+        "description": "The API Key value for a VisWiz.io account"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "https://api.viswiz.io",
+        "defaultRaw": "https://api.viswiz.io",
+        "name": "options.server",
+        "description": "The server URL prefix for all requests"
+      }
+    ]
+  },
+  {
+    "__docId__": 4,
+    "kind": "member",
+    "name": "apiKey",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#apiKey",
+    "access": "public",
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "member",
+    "name": "server",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#server",
+    "access": "public",
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "method",
+    "name": "_request",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#_request",
+    "access": "private",
+    "description": "Execute a HTTP request",
+    "lineNumber": 33,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "method",
+        "description": "http method"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "path",
+        "description": "path for the request"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "body",
+        "description": "body parameters / object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "headers",
+        "description": "header parameters"
+      }
+    ],
+    "ignore": true,
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "method",
+    "name": "_getHeaders",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#_getHeaders",
+    "access": "private",
+    "description": "Get the list of required headers for an API request",
+    "lineNumber": 64,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "{}",
+        "defaultRaw": {},
+        "name": "additionalHeaders",
+        "description": "headers object"
+      }
+    ],
+    "ignore": true,
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "name": "getAccount",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getAccount",
+    "access": "public",
+    "description": "Get the current account information",
+    "examples": [
+      "const account = await client.getAccount();"
+    ],
+    "lineNumber": 88,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The current account object"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 9,
+    "kind": "method",
+    "name": "getWebhooks",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getWebhooks",
+    "access": "public",
+    "description": "Get the list of webhooks configured for the account.",
+    "examples": [
+      "const webhooks = await client.getWebhooks();"
+    ],
+    "lineNumber": 102,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{array<object>} - The list of webhooks objects"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "name": "createWebhook",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#createWebhook",
+    "access": "public",
+    "description": "When a build comparison is finished a POST HTTP request will be triggered towards all\nwebhooks configured for the account.",
+    "examples": [
+      "const webhook = await client.createWebhook({\n  name: 'My first webhook',\n  url: 'http://amazing.com/webhook-handler'\n});"
+    ],
+    "lineNumber": 123,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The new webhook object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
+    "name": "getProjects",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getProjects",
+    "access": "public",
+    "description": "Get a list of all the projects for the account.",
+    "examples": [
+      "const projects = await client.getProjects();"
+    ],
+    "lineNumber": 141,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{array<object>} - The list of projects objects"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 12,
+    "kind": "method",
+    "name": "createProject",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#createProject",
+    "access": "public",
+    "description": "Create a new project for the account.",
+    "examples": [
+      "const project = await client.createProject({\n  name: 'My Amazing Project',\n  url: 'http://github.com/amaze/project'\n});"
+    ],
+    "lineNumber": 161,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The new project object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 13,
+    "kind": "method",
+    "name": "getBuilds",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getBuilds",
+    "access": "public",
+    "description": "Get a list of all the builds for a project.",
+    "examples": [
+      "const builds = await client.getBuilds('mwwuciQG7ETAmKoyRHgkGg');"
+    ],
+    "lineNumber": 180,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{array<object>} - The list of builds objects"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "projectID",
+        "description": "The requested project ID"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 14,
+    "kind": "method",
+    "name": "createBuild",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#createBuild",
+    "access": "public",
+    "description": "Create a new build for a project.",
+    "examples": [
+      "const build = await client.createBuild({\n  projectID: 'mwwuciQG7ETAmKoyRHgkGg',\n  name: 'New amazing changes',\n  revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'\n});"
+    ],
+    "lineNumber": 208,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The new build object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params.projectID",
+        "description": "The requested project ID"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "method",
+    "name": "finishBuild",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#finishBuild",
+    "access": "public",
+    "description": "Finish a build when all images have been created. This triggers the actual build comparison to execute.",
+    "examples": [
+      "await client.finishBuild('gjVgsiWeh4TYVseqJsU6ev');"
+    ],
+    "lineNumber": 230,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "buildID",
+        "description": "The requested build ID"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "method",
+    "name": "getBuildResults",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getBuildResults",
+    "access": "public",
+    "description": "Get the results for a build which has been compared to another build.",
+    "examples": [
+      "const buildResults = await client.getBuildResults('gjVgsiWeh4TYVseqJsU6ev');"
+    ],
+    "lineNumber": 251,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The build results object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "buildID",
+        "description": "The requested build ID"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 17,
+    "kind": "method",
+    "name": "getImages",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#getImages",
+    "access": "public",
+    "description": "Get a list of all images for a build.",
+    "examples": [
+      "const images = await client.getImages('gjVgsiWeh4TYVseqJsU6ev');"
+    ],
+    "lineNumber": 272,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{array<object>} - The list of images objects"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "buildID",
+        "description": "The requested build ID"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "method",
+    "name": "createImage",
+    "memberof": "viswiz-nodejs-sdk/sdk.js~VisWiz",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "viswiz-nodejs-sdk/sdk.js~VisWiz#createImage",
+    "access": "public",
+    "description": "Upload a new image for a build. This endpoint accepts only one PNG image per request.",
+    "examples": [
+      "const image = await client.createImage('gjVgsiWeh4TYVseqJsU6ev', 'image-name', '/path/to/image.png');"
+    ],
+    "lineNumber": 295,
+    "unknown": [
+      {
+        "tagName": "@method",
+        "tagValue": ""
+      },
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise}"
+      },
+      {
+        "tagName": "@fulfil",
+        "tagValue": "{object} - The new image object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "buildID",
+        "description": "The requested build ID"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "name",
+        "description": "The image name"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "filePath",
+        "description": "The image file path"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "kind": "index",
+    "content": "# VisWiz.io Node.js SDK\n\n> The official Node.js VisWiz.io SDK.\n\n[![Travis branch](https://img.shields.io/travis/viswiz-io/viswiz-nodejs-sdk/master.svg?style=flat-square)](https://travis-ci.org/viswiz-io/viswiz-nodejs-sdk)\n[![NPM version](https://img.shields.io/npm/v/viswiz-sdk.svg?style=flat-square)](https://www.npmjs.com/package/viswiz-sdk)\n[![Dependencies](https://img.shields.io/david/viswiz-io/viswiz-nodejs-sdk.svg?style=flat-square)](https://david-dm.org/viswiz-io/viswiz-nodejs-sdk)\n\nWelcome to the [VisWiz.io](https://www.viswiz.io/) Node.js SDK documentation.\n\nThe SDK allows you to query and create new projects, builds or images within the\nVisWiz service.\n\n## Documentation\n\nSee the JSDoc markdown documentation in\n[doc/](https://github.com/viswiz-io/viswiz-nodejs-sdk/doc/).\n\n## Change log\n\nThe change log can be found here:\n[CHANGELOG.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/CHANGELOG.md#readme).\n\n## Authors and license\n\nAuthor: [VisWiz.io](https://www.viswiz.io/).\n\nMIT License, see the included\n[License.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/License.md)\nfile.\n",
+    "longname": "/home/travis/build/viswiz-io/viswiz-nodejs-sdk/README.md",
+    "name": "./README.md",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "manualIndex",
+    "globalIndex": false,
+    "content": null,
+    "longname": "",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "manual",
+    "longname": "/home/travis/build/viswiz-io/viswiz-nodejs-sdk/manual/usage.md",
+    "name": "./manual/usage.md",
+    "content": "# Using the SDK\n\n## Installation\n\nInstall the SDK module using `yarn`:\n\n```\n$ yarn add -D viswiz-sdk\n```\n\nOr using `npm`:\n\n```\n$ npm install -D viswiz-sdk\n```\n\n## Usage\n\nUsing `Promise`:\n\n```js\nconst VisWiz = require('viswiz-sdk');\n\nconst client = new VisWiz('your-unique-api-key-here');\n\nclient\n\t.getProjects()\n\t.then(projects => projects.find(project => project.name === 'Foo'))\n\t.then(project =>\n\t\tclient.createBuild({\n\t\t\tprojectID: project.id,\n\t\t\tname: 'Foo Bar',\n\t\t\trevision: 'abcdef1234567890',\n\t\t})\n\t)\n\t.then(build =>\n\t\tclient.createImage(build.id, 'image-name', '/path/to/image.png')\n\t);\n```\n\nUsing `async`/`await`:\n\n```js\nconst VisWiz = require('viswiz-sdk');\n\nasync function run() {\n\tconst client = new VisWiz('your-unique-api-key-here');\n\n\tconst projects = await client.getProjects();\n\tconst project = projects.find(project => project.name === 'Foo');\n\n\tconst build = await client.createBuild({\n\t\tprojectID: project.id,\n\t\tname: 'Foo Bar',\n\t\trevision: 'abcdef1234567890',\n\t});\n\n\tawait client.createImage(build.id, 'image-name', '/path/to/image.png');\n}\n\nrun();\n```\n",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "manual",
+    "longname": "/home/travis/build/viswiz-io/viswiz-nodejs-sdk/CHANGELOG.md",
+    "name": "./CHANGELOG.md",
+    "content": "# Change Log\n\nAll notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.\n\n<a name=\"1.0.3\"></a>\n## [1.0.3](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.0.2...v1.0.3) (2017-12-08)\n\n\n### Bug Fixes\n\n* Update readme links and format ([c1fa8cf](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/c1fa8cf))\n\n\n\n<a name=\"1.0.2\"></a>\n## [1.0.2](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.0.1...v1.0.2) (2017-12-07)\n\n\n### Bug Fixes\n\n* Correct github URL :bug: ([e97ea83](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/e97ea83))\n\n\n\n<a name=\"1.0.1\"></a>\n## [1.0.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.0.0...v1.0.1) (2017-12-07)\n\n\n### Bug Fixes\n\n* Updated docs with string IDs :twisted_rightwards_arrows: ([453eec0](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/453eec0))\n\n\n\n<a name=\"1.0.0\"></a>\n## 1.0.0 (2017-12-04)\n\n\n### Features\n\n* Initial commit ([88c1af7](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/88c1af7))\n",
+    "static": true,
+    "access": "public"
+  }
+]
