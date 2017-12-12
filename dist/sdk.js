@@ -1,7 +1,28 @@
-import fs from 'fs';
-import FormData from 'form-data';
-import got from 'got';
-import pkg from './package.json';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+	value: true,
+});
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _formData = require('form-data');
+
+var _formData2 = _interopRequireDefault(_formData);
+
+var _got = require('got');
+
+var _got2 = _interopRequireDefault(_got);
+
+var _package = require('./package.json');
+
+var _package2 = _interopRequireDefault(_package);
+
+function _interopRequireDefault(obj) {
+	return obj && obj.__esModule ? obj : { default: obj };
+}
 
 const SERVER_URL = 'https://api.viswiz.io';
 
@@ -35,11 +56,11 @@ class VisWiz {
 		const options = {
 			body,
 			headers,
-			json: typeof body === 'object' && !(body instanceof FormData),
+			json: typeof body === 'object' && !(body instanceof _formData2.default),
 			method,
 		};
 
-		return got(url, options).then(response => {
+		return (0, _got2.default)(url, options).then(response => {
 			const { body } = response;
 			let parsed = body;
 
@@ -67,8 +88,8 @@ class VisWiz {
 				Accept: 'application/json',
 				Authorization: 'Bearer ' + this.apiKey,
 				'Content-Type': 'application/json',
-				'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${
-					pkg.repository.url
+				'User-Agent': `viswiz-nodejs-sdk/${_package2.default.version} (${
+					_package2.default.repository.url
 				})`,
 			},
 			additionalHeaders || {}
@@ -302,15 +323,15 @@ class VisWiz {
 		if (!filePath) {
 			return Promise.reject(new Error('Missing required parameter: filePath'));
 		}
-		if (!fs.existsSync(filePath)) {
+		if (!_fs2.default.existsSync(filePath)) {
 			return Promise.reject(new Error('File not found: ' + filePath));
 		}
 
 		const path = `/builds/${buildID}/images`;
 
-		const form = new FormData();
+		const form = new _formData2.default();
 		form.append('name', name);
-		form.append('image', fs.createReadStream(filePath));
+		form.append('image', _fs2.default.createReadStream(filePath));
 
 		return this._request(
 			'POST',
@@ -321,4 +342,4 @@ class VisWiz {
 	}
 }
 
-export default VisWiz;
+exports.default = VisWiz;

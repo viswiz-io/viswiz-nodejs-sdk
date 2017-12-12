@@ -13,15 +13,16 @@
     "node": ">=8.5.0"
   },
   "files": [
-    "sdk.js"
+    "dist/sdk.js"
   ],
   "scripts": {
+    "build": "babel sdk.js --out-dir dist/",
     "commitmsg": "validate-commit-msg",
-    "docs": "jsdoc2md --partial docs/main.hbs --helper docs/helpers.js --files sdk.js > Documentation.md",
+    "docs": "esdoc",
     "lint": "eslint . --cache --fix --ignore-pattern '!.eslintrc.js'",
-    "pretty": "prettier --write --list-different \"**/*.js\"",
+    "pretty": "prettier --write --list-different \"sdk.js\"",
     "precommit": "lint-staged",
-    "release": "yarn docs && git add Documentation.md && standard-version -a",
+    "release": "npm run build && git add dist && standard-version -a",
     "test:jest": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -33,10 +34,16 @@
     "got": "^8.0.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "esdoc": "^1.0.4",
+    "esdoc-brand-plugin": "^1.0.0",
+    "esdoc-importpath-plugin": "^1.0.1",
+    "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^4.12.1",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
-    "jsdoc-to-markdown": "^3.0.2",
     "lint-staged": "^6.0.0",
     "nock": "^9.1.4",
     "prettier": "^1.8.2",
