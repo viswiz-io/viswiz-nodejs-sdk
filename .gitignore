@@ -8,4 +8,6 @@ Thumbs.db
 *.log
 .eslintcache
 coverage/
+dist/
+docs/
 tmp/

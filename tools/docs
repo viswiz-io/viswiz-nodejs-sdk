@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# Builds the documentation and publishes it to gh-pages branch
+#
+
+set -euo pipefail
+
+function cleanup {
+	rm -f .git/credentials
+}
+trap cleanup EXIT
+
+USER="viswiz-io"
+PROJECT="viswiz-nodejs-sdk"
+DOCS_BUILD="docs"
+DOCS_REPO="tmp/docs"
+
+rm -rf "$DOCS_BUILD" "$DOCS_REPO"
+
+# clone the gh-pages branch
+git clone -v --branch gh-pages "https://github.com/$USER/$PROJECT.git" "$DOCS_REPO"
+
+# generate the docs
+npm run docs
+
+cd "$DOCS_BUILD"
+rsync -rt --exclude=".git" . "../$DOCS_REPO"
+cd ../
+
+# setup git credentials in gh-pages repository
+cd "$DOCS_REPO"
+git config credential.helper "store --file=.git/credentials"
+echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+git config user.name "TravisCI"
+git config user.email "ci@travis-ci.org"
+
+# commit & push docs
+git add --all .
+git commit -m "Documentation update for ${TRAVIS_COMMIT}"
+git --no-pager log -n 3
+git push -f origin gh-pages

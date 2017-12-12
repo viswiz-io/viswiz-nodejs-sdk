@@ -1,6 +1,6 @@
-const path = require('path');
-const VisWiz = require('../sdk');
-const nock = require('../utils/nock');
+import path from 'path';
+import VisWiz from '../src/sdk';
+import nock from '../utils/nock';
 
 let instance;
 

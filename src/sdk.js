@@ -1,7 +1,7 @@
-const fs = require('fs');
-const FormData = require('form-data');
-const got = require('got');
-const pkg = require('./package.json');
+import fs from 'fs';
+import FormData from 'form-data';
+import got from 'got';
+import pkg from '../package.json';
 
 const SERVER_URL = 'https://api.viswiz.io';
 
@@ -11,7 +11,7 @@ class VisWiz {
 	 * @typicalname client
 	 * @param {string} apiKey - The API Key value for a VisWiz.io account
 	 * @param {object} [options]
-	 * @param {string} [options.server=api.viswiz.io] - The server URL prefix for all requests
+	 * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
 	 *
 	 * @example
 	 * const client = new VisWiz('your-unique-api-key-here');
@@ -26,7 +26,7 @@ class VisWiz {
 	 *
 	 * @private
 	 * @param {string} method - http method
-	 * @param {string} url - url to do request
+	 * @param {string} path - path for the request
 	 * @param {object} body - body parameters / object
 	 * @param {object} [headers] - header parameters
 	 */
@@ -148,7 +148,7 @@ class VisWiz {
 	 * Create a new project for the account.
 	 *
 	 * @method
-	 * @param {object} body
+	 * @param {object} params
 	 * @returns {Promise}
 	 * @fulfil {object} - The new project object
 	 *
@@ -321,4 +321,4 @@ class VisWiz {
 	}
 }
 
-module.exports = VisWiz;
+export default VisWiz;
