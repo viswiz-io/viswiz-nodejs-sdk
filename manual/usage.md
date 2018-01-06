@@ -16,29 +16,7 @@ $ npm install -D viswiz-sdk
 
 ## Usage
 
-Using `Promise`:
-
-```js
-const VisWiz = require('viswiz-sdk');
-
-const client = new VisWiz('your-unique-api-key-here');
-
-client
-	.getProjects()
-	.then(projects => projects.find(project => project.name === 'Foo'))
-	.then(project =>
-		client.createBuild({
-			projectID: project.id,
-			name: 'Foo Bar',
-			revision: 'abcdef1234567890',
-		})
-	)
-	.then(build =>
-		client.createImage(build.id, 'image-name', '/path/to/image.png')
-	);
-```
-
-Using `async`/`await`:
+Using `async`/`await` (node 8+):
 
 ```js
 const VisWiz = require('viswiz-sdk');
@@ -56,7 +34,31 @@ async function run() {
 	});
 
 	await client.createImage(build.id, 'image-name', '/path/to/image.png');
+
+	await client.finishBuild(build.id);
 }
 
 run();
+```
+
+Using `Promise`:
+
+```js
+const VisWiz = require('viswiz-sdk');
+
+const client = new VisWiz('your-unique-api-key-here');
+
+client
+	.getProjects()
+	.then(projects => projects.find(project => project.name === 'Foo'))
+	.then(project => client.createBuild({
+		projectID: project.id,
+		name: 'Foo Bar',
+		revision: 'abcdef1234567890',
+	}))
+	.then(
+    build => client
+      .createImage(build.id, 'image-name', '/path/to/image.png')
+		  .then(() => client.finishBuild(build.id))
+	);
 ```

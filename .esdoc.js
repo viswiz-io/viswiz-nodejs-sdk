@@ -1,5 +1,5 @@
 module.exports = {
-	source: '.',
+	source: './src',
 	destination: './docs',
 	includes: ['^sdk\\.js$'],
 	index: './README.md',
@@ -23,7 +23,7 @@ module.exports = {
 			name: 'esdoc-importpath-plugin',
 			option: {
 				stripPackageName: false,
-				replaces: [{ from: 'viswiz-nodejs-sdk/', to: '' }],
+				replaces: [{ from: 'src/sdk.js', to: 'dist/sdk.js' }],
 			},
 		},
 	],
