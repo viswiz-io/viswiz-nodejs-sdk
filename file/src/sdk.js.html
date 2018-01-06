@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/sdk.js | VisWiz.io SDK</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="The VisWiz.io Node.js SDK"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="VisWiz.io SDK"><meta property="twitter:description" content="The VisWiz.io Node.js SDK"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/viswiz-io/viswiz-nodejs-sdk"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/sdk.js~VisWiz.html">VisWiz</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/sdk.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import fs from &apos;fs&apos;;
+import FormData from &apos;form-data&apos;;
+import got from &apos;got&apos;;
+import pkg from &apos;../package.json&apos;;
+
+const SERVER_URL = &apos;https://api.viswiz.io&apos;;
+
+class VisWiz {
+	/**
+	 * @class VisWiz
+	 * @typicalname client
+	 * @param {string} apiKey - The API Key value for a VisWiz.io account
+	 * @param {object} [options]
+	 * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
+	 *
+	 * @example
+	 * const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
+	 */
+	constructor(apiKey, options) {
+		this.apiKey = apiKey || &apos;MISSING&apos;;
+		this.server = (options &amp;&amp; options.server) || SERVER_URL;
+	}
+
+	/**
+	 * Execute a HTTP request
+	 *
+	 * @private
+	 * @param {string} method - http method
+	 * @param {string} path - path for the request
+	 * @param {object} body - body parameters / object
+	 * @param {object} [headers] - header parameters
+	 */
+	_request(method, path, body, headers) {
+		const url = this.server + path;
+		const options = {
+			body,
+			headers,
+			json: typeof body === &apos;object&apos; &amp;&amp; !(body instanceof FormData),
+			method,
+		};
+
+		return got(url, options).then(response =&gt; {
+			const { body } = response;
+			let parsed = body;
+
+			if (!options.json) {
+				try {
+					parsed = JSON.parse(body);
+				} catch (err) {
+					// Nothing to do here
+				}
+			}
+
+			return parsed;
+		});
+	}
+
+	/**
+	 * Get the list of required headers for an API request
+	 *
+	 * @private
+	 * @param {object} [additionalHeaders={}] - headers object
+	 */
+	_getHeaders(additionalHeaders) {
+		return Object.assign(
+			{
+				Accept: &apos;application/json&apos;,
+				Authorization: &apos;Bearer &apos; + this.apiKey,
+				&apos;Content-Type&apos;: &apos;application/json&apos;,
+				&apos;User-Agent&apos;: `viswiz-nodejs-sdk/${pkg.version} (${
+					pkg.repository.url
+				})`,
+			},
+			additionalHeaders || {}
+		);
+	}
+
+	/**
+	 * Get the current account information
+	 *
+	 * @method
+	 * @returns {Promise}
+	 * @fulfil {object} - The current account object
+	 *
+	 * @example
+	 * const account = await client.getAccount();
+	 */
+	getAccount() {
+		return this._request(&apos;GET&apos;, &apos;/account&apos;, null, this._getHeaders());
+	}
+
+	/**
+	 * Get the list of webhooks configured for the account.
+	 *
+	 * @method
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The list of webhooks objects
+	 *
+	 * @example
+	 * const webhooks = await client.getWebhooks();
+	 */
+	getWebhooks() {
+		return this._request(&apos;GET&apos;, &apos;/webhooks&apos;, null, this._getHeaders()).then(
+			results =&gt; results.webhooks
+		);
+	}
+
+	/**
+	 * When a build comparison is finished a POST HTTP request will be triggered towards all
+	 * webhooks configured for the account.
+	 *
+	 * @method
+	 * @param {object} params
+	 * @returns {Promise}
+	 * @fulfil {object} - The new webhook object
+	 *
+	 * @example
+	 * const webhook = await client.createWebhook({
+	 *   name: &apos;My first webhook&apos;,
+	 *   url: &apos;http://amazing.com/webhook-handler&apos;
+	 * });
+	 */
+	createWebhook(params) {
+		if (!params) {
+			return Promise.reject(new Error(&apos;Missing required parameter: params&apos;));
+		}
+
+		return this._request(&apos;POST&apos;, &apos;/webhooks&apos;, params, this._getHeaders());
+	}
+
+	/**
+	 * Get a list of all the projects for the account.
+	 *
+	 * @method
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The list of projects objects
+	 *
+	 * @example
+	 * const projects = await client.getProjects();
+	 */
+	getProjects() {
+		return this._request(&apos;GET&apos;, &apos;/projects&apos;, null, this._getHeaders()).then(
+			results =&gt; results.projects
+		);
+	}
+
+	/**
+	 * Create a new project for the account.
+	 *
+	 * @method
+	 * @param {object} params
+	 * @returns {Promise}
+	 * @fulfil {object} - The new project object
+	 *
+	 * @example
+	 * const project = await client.createProject({
+	 *   name: &apos;My Amazing Project&apos;,
+	 *   url: &apos;http://github.com/amaze/project&apos;
+	 * });
+	 */
+	createProject(params) {
+		if (!params) {
+			return Promise.reject(new Error(&apos;Missing required parameter: params&apos;));
+		}
+
+		return this._request(&apos;POST&apos;, &apos;/projects&apos;, params, this._getHeaders());
+	}
+
+	/**
+	 * Get a list of all the builds for a project.
+	 *
+	 * @method
+	 * @param {string} projectID - The requested project ID
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The list of builds objects
+	 *
+	 * @example
+	 * const builds = await client.getBuilds(&apos;mwwuciQG7ETAmKoyRHgkGg&apos;);
+	 */
+	getBuilds(projectID) {
+		if (!projectID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: projectID&apos;));
+		}
+
+		const path = `/projects/${projectID}/builds`;
+
+		return this._request(&apos;GET&apos;, path, null, this._getHeaders()).then(
+			results =&gt; results.builds
+		);
+	}
+
+	/**
+	 * Create a new build for a project.
+	 *
+	 * @method
+	 * @param {object} params
+	 * @param {string} params.projectID - The requested project ID
+	 * @returns {Promise}
+	 * @fulfil {object} - The new build object
+	 *
+	 * @example
+	 * const build = await client.createBuild({
+	 *   projectID: &apos;mwwuciQG7ETAmKoyRHgkGg&apos;,
+	 *   name: &apos;New amazing changes&apos;,
+	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
+	 * });
+	 */
+	createBuild(params) {
+		if (!params || !params.projectID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: projectID&apos;));
+		}
+
+		const path = `/projects/${params.projectID}/builds`;
+
+		delete params.projectID;
+
+		return this._request(&apos;POST&apos;, path, params, this._getHeaders());
+	}
+
+	/**
+	 * Finish a build when all images have been created. This triggers the actual build comparison to execute.
+	 *
+	 * @method
+	 * @param {string} buildID - The requested build ID
+	 * @returns {Promise}
+	 *
+	 * @example
+	 * await client.finishBuild(&apos;gjVgsiWeh4TYVseqJsU6ev&apos;);
+	 */
+	finishBuild(buildID) {
+		if (!buildID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: buildID&apos;));
+		}
+
+		const path = `/builds/${buildID}/finish`;
+
+		return this._request(&apos;POST&apos;, path, null, this._getHeaders());
+	}
+
+	/**
+	 * Get the results for a build which has been compared to another build.
+	 *
+	 * @method
+	 * @param {string} buildID - The requested build ID
+	 * @returns {Promise}
+	 * @fulfil {object} - The build results object
+	 *
+	 * @example
+	 * const buildResults = await client.getBuildResults(&apos;gjVgsiWeh4TYVseqJsU6ev&apos;);
+	 */
+	getBuildResults(buildID) {
+		if (!buildID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: buildID&apos;));
+		}
+
+		const path = `/builds/${buildID}/results`;
+
+		return this._request(&apos;GET&apos;, path, null, this._getHeaders());
+	}
+
+	/**
+	 * Get a list of all images for a build.
+	 *
+	 * @method
+	 * @param {string} buildID - The requested build ID
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The list of images objects
+	 *
+	 * @example
+	 * const images = await client.getImages(&apos;gjVgsiWeh4TYVseqJsU6ev&apos;);
+	 */
+	getImages(buildID) {
+		if (!buildID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: buildID&apos;));
+		}
+
+		const path = `/builds/${buildID}/images`;
+
+		return this._request(&apos;GET&apos;, path, null, this._getHeaders());
+	}
+
+	/**
+	 * Upload a new image for a build. This endpoint accepts only one PNG image per request.
+	 *
+	 * @method
+	 * @param {string} buildID - The requested build ID
+	 * @param {string} name - The image name
+	 * @param {string} filePath - The image file path
+	 * @returns {Promise}
+	 * @fulfil {object} - The new image object
+	 *
+	 * @example
+	 * const image = await client.createImage(&apos;gjVgsiWeh4TYVseqJsU6ev&apos;, &apos;image-name&apos;, &apos;/path/to/image.png&apos;);
+	 */
+	createImage(buildID, name, filePath) {
+		if (!buildID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: buildID&apos;));
+		}
+		if (!name) {
+			return Promise.reject(new Error(&apos;Missing required parameter: name&apos;));
+		}
+		if (!filePath) {
+			return Promise.reject(new Error(&apos;Missing required parameter: filePath&apos;));
+		}
+		if (!fs.existsSync(filePath)) {
+			return Promise.reject(new Error(&apos;File not found: &apos; + filePath));
+		}
+
+		const path = `/builds/${buildID}/images`;
+
+		const form = new FormData();
+		form.append(&apos;name&apos;, name);
+		form.append(&apos;image&apos;, fs.createReadStream(filePath));
+
+		return this._request(
+			&apos;POST&apos;,
+			path,
+			form,
+			this._getHeaders(form.getHeaders())
+		);
+	}
+}
+
+export default VisWiz;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

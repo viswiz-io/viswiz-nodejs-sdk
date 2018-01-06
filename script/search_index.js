@@ -1,98 +1,98 @@
 window.esdocSearchIndex = [
   [
     "viswiz-sdk~viswiz",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html",
+    "class/src/sdk.js~VisWiz.html",
     "<span>VisWiz</span> <span class=\"search-result-import-path\">viswiz-sdk</span>",
     "class"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js",
-    "file/viswiz-nodejs-sdk/sdk.js.html",
-    "viswiz-nodejs-sdk/sdk.js",
+    "src/sdk.js",
+    "file/src/sdk.js.html",
+    "src/sdk.js",
     "file"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#apikey",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-member-apiKey",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#apiKey",
+    "src/sdk.js~viswiz#apikey",
+    "class/src/sdk.js~VisWiz.html#instance-member-apiKey",
+    "src/sdk.js~VisWiz#apiKey",
     "member"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#constructor",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-constructor-constructor",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#constructor",
+    "src/sdk.js~viswiz#constructor",
+    "class/src/sdk.js~VisWiz.html#instance-constructor-constructor",
+    "src/sdk.js~VisWiz#constructor",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#createbuild",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-createBuild",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#createBuild",
+    "src/sdk.js~viswiz#createbuild",
+    "class/src/sdk.js~VisWiz.html#instance-method-createBuild",
+    "src/sdk.js~VisWiz#createBuild",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#createimage",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-createImage",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#createImage",
+    "src/sdk.js~viswiz#createimage",
+    "class/src/sdk.js~VisWiz.html#instance-method-createImage",
+    "src/sdk.js~VisWiz#createImage",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#createproject",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-createProject",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#createProject",
+    "src/sdk.js~viswiz#createproject",
+    "class/src/sdk.js~VisWiz.html#instance-method-createProject",
+    "src/sdk.js~VisWiz#createProject",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#createwebhook",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-createWebhook",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#createWebhook",
+    "src/sdk.js~viswiz#createwebhook",
+    "class/src/sdk.js~VisWiz.html#instance-method-createWebhook",
+    "src/sdk.js~VisWiz#createWebhook",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#finishbuild",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-finishBuild",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#finishBuild",
+    "src/sdk.js~viswiz#finishbuild",
+    "class/src/sdk.js~VisWiz.html#instance-method-finishBuild",
+    "src/sdk.js~VisWiz#finishBuild",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getaccount",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getAccount",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getAccount",
+    "src/sdk.js~viswiz#getaccount",
+    "class/src/sdk.js~VisWiz.html#instance-method-getAccount",
+    "src/sdk.js~VisWiz#getAccount",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getbuildresults",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getBuildResults",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getBuildResults",
+    "src/sdk.js~viswiz#getbuildresults",
+    "class/src/sdk.js~VisWiz.html#instance-method-getBuildResults",
+    "src/sdk.js~VisWiz#getBuildResults",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getbuilds",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getBuilds",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getBuilds",
+    "src/sdk.js~viswiz#getbuilds",
+    "class/src/sdk.js~VisWiz.html#instance-method-getBuilds",
+    "src/sdk.js~VisWiz#getBuilds",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getimages",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getImages",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getImages",
+    "src/sdk.js~viswiz#getimages",
+    "class/src/sdk.js~VisWiz.html#instance-method-getImages",
+    "src/sdk.js~VisWiz#getImages",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getprojects",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getProjects",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getProjects",
+    "src/sdk.js~viswiz#getprojects",
+    "class/src/sdk.js~VisWiz.html#instance-method-getProjects",
+    "src/sdk.js~VisWiz#getProjects",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#getwebhooks",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-method-getWebhooks",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#getWebhooks",
+    "src/sdk.js~viswiz#getwebhooks",
+    "class/src/sdk.js~VisWiz.html#instance-method-getWebhooks",
+    "src/sdk.js~VisWiz#getWebhooks",
     "method"
   ],
   [
-    "viswiz-nodejs-sdk/sdk.js~viswiz#server",
-    "class/viswiz-nodejs-sdk/sdk.js~VisWiz.html#instance-member-server",
-    "viswiz-nodejs-sdk/sdk.js~VisWiz#server",
+    "src/sdk.js~viswiz#server",
+    "class/src/sdk.js~VisWiz.html#instance-member-server",
+    "src/sdk.js~VisWiz#server",
     "member"
   ]
 ]

@@ -59,26 +59,7 @@
 <pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
 </code></pre><p>Or using <code>npm</code>:</p>
 <pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
-</code></pre><h2 id="usage">Usage</h2><p>Using <code>Promise</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
-
-const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
-
-client
-    .getProjects()
-    .then(projects =&gt; projects.find(project =&gt; project.name === &apos;Foo&apos;))
-    .then(project =&gt;
-        client.createBuild({
-            projectID: project.id,
-            name: &apos;Foo Bar&apos;,
-            revision: &apos;abcdef1234567890&apos;,
-        })
-    )
-    .then(build =&gt;
-        client.createImage(build.id, &apos;image-name&apos;, &apos;/path/to/image.png&apos;)
-    );</code>
-</code></pre>
-<p>Using <code>async</code>/<code>await</code>:</p>
+</code></pre><h2 id="usage">Usage</h2><p>Using <code>async</code>/<code>await</code> (node 8+):</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
 
 async function run() {
@@ -94,9 +75,30 @@ async function run() {
     });
 
     await client.createImage(build.id, &apos;image-name&apos;, &apos;/path/to/image.png&apos;);
+
+    await client.finishBuild(build.id);
 }
 
 run();</code>
+</code></pre>
+<p>Using <code>Promise</code>:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
+
+const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
+
+client
+    .getProjects()
+    .then(projects =&gt; projects.find(project =&gt; project.name === &apos;Foo&apos;))
+    .then(project =&gt; client.createBuild({
+        projectID: project.id,
+        name: &apos;Foo Bar&apos;,
+        revision: &apos;abcdef1234567890&apos;,
+    }))
+    .then(
+    build =&gt; client
+      .createImage(build.id, &apos;image-name&apos;, &apos;/path/to/image.png&apos;)
+          .then(() =&gt; client.finishBuild(build.id))
+    );</code>
 </code></pre>
 </div>
 </div>
