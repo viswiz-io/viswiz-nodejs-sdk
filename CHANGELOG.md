@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.0.4...v1.1.0) (2018-01-16)
+
+
+### Bug Fixes
+
+* Add finishBuild to usage examples docs :memo: ([304a435](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/304a435))
+
+
+### Features
+
+* Project notifications :tada: ([caad9b6](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/caad9b6))
+
+
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.0.3...v1.0.4) (2017-12-12)
 
