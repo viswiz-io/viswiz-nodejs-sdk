@@ -10,8 +10,9 @@ beforeEach(() => {
 });
 
 describe('projects methods', () => {
+	const projectID = 'acbdef';
 	const project = {
-		id: 123,
+		id: 'abcdef',
 		name: 'Foo Bar',
 		url: 'http://github.com/foo/bar',
 	};
@@ -78,6 +79,84 @@ describe('projects methods', () => {
 			return instance.createProject().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('params');
+			});
+		});
+	});
+
+	describe('getProjectNotifications', () => {
+		it('resolves on successfull request', () => {
+			const body = {
+				emailEnabled: true,
+				slackEnabled: false,
+				slackURL: '',
+			};
+
+			const scope = nock()
+				.get(`/projects/${projectID}/notifications`)
+				.reply(200, body);
+
+			return instance.getProjectNotifications(projectID).then(response => {
+				expect(response).toEqual(body);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		});
+
+		it('rejects on error request', () => {
+			const scope = nock()
+				.get(`/projects/${projectID}/notifications`)
+				.reply(401);
+
+			return instance.getProjectNotifications(projectID).catch(response => {
+				expect(response.statusCode).toBe(401);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		});
+
+		it('rejects on missing data', () => {
+			return instance.getProjectNotifications().catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('projectID');
+			});
+		});
+	});
+
+	describe('updateProjectNotifications', () => {
+		const notifications = {
+			emailEnabled: false,
+			slackEnabled: true,
+			slackURL: 'http://foo.com/',
+		};
+
+		it('resolves on successfull request', () => {
+			const scope = nock()
+				.put(`/projects/${projectID}/notifications`)
+				.reply(200, notifications);
+
+			return instance
+				.updateProjectNotifications(projectID, notifications)
+				.then(response => {
+					expect(response).toEqual(notifications);
+					expect(scope.isDone()).toBeTruthy();
+				});
+		});
+
+		it('rejects on error request', () => {
+			const scope = nock()
+				.put(`/projects/${projectID}/notifications`)
+				.reply(401);
+
+			return instance
+				.updateProjectNotifications(projectID, notifications)
+				.catch(response => {
+					expect(response.statusCode).toBe(401);
+					expect(scope.isDone()).toBeTruthy();
+				});
+		});
+
+		it('rejects on missing data', () => {
+			return instance.updateProjectNotifications().catch(err => {
+				expect(err).toBeTruthy();
+				expect(err.message).toMatch('projectID');
 			});
 		});
 	});

@@ -57,8 +57,8 @@ client
 		revision: 'abcdef1234567890',
 	}))
 	.then(
-    build => client
-      .createImage(build.id, 'image-name', '/path/to/image.png')
-		  .then(() => client.finishBuild(build.id))
+		build => client
+			.createImage(build.id, 'image-name', '/path/to/image.png')
+			.then(() => client.finishBuild(build.id))
 	);
 ```
