@@ -204,6 +204,56 @@ class VisWiz {
 	}
 
 	/**
+	 * Get the notifications settings for a project.
+	 *
+	 * @method
+	 * @param {string} projectID - The requested project ID
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The notifications settings
+	 *
+	 * @example
+	 * const notifications = await client.getProjectNotifications(&apos;mwwuciQG7ETAmKoyRHgkGg&apos;);
+	 */
+	getProjectNotifications(projectID) {
+		if (!projectID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: projectID&apos;));
+		}
+
+		const path = `/projects/${projectID}/notifications`;
+
+		return this._request(&apos;GET&apos;, path, null, this._getHeaders());
+	}
+
+	/**
+	 * Update the notifications settings for a project.
+	 *
+	 * @method
+	 * @param {string} projectID - The requested project ID
+	 * @param {object} params
+	 * @param {string} [params.emailEnabled] - Controls if email reports are sent on new builds
+	 * @param {string} [params.slackEnabled] - Controls if Slack notifications are sent on new builds
+	 * @param {string} [params.slackURL] - The Slack webhook URL to use for sending notifications
+	 * @returns {Promise}
+	 * @fulfil {array&lt;object&gt;} - The updated notifications settings
+	 *
+	 * @example
+	 * const build = await client.updateProjectNotifications(&apos;mwwuciQG7ETAmKoyRHgkGg&apos;, {
+	 *   emailEnabled: false,
+	 *   slackEnabled: true,
+	 *   slackURL: &apos;https://hooks.slack.com/services/FOO/BAR/A18759GACAsgawg351ac&apos;,
+	 * });
+	 */
+	updateProjectNotifications(projectID, params) {
+		if (!projectID) {
+			return Promise.reject(new Error(&apos;Missing required parameter: projectID&apos;));
+		}
+
+		const path = `/projects/${projectID}/notifications`;
+
+		return this._request(&apos;PUT&apos;, path, params, this._getHeaders());
+	}
+
+	/**
 	 * Get a list of all the builds for a project.
 	 *
 	 * @method

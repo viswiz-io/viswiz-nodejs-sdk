@@ -453,6 +453,35 @@ webhooks configured for the account.</p>
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/sdk.js~VisWiz.html#instance-method-getProjectNotifications">getProjectNotifications</a></span></span><span class="code" data-ice="signature">(projectID: <span>string</span>): <span>Promise</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Get the notifications settings for a project.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/sdk.js~VisWiz.html#instance-method-getProjects">getProjects</a></span></span><span class="code" data-ice="signature">(): <span>Promise</span></span>
         </p>
       </div>
@@ -489,6 +518,35 @@ webhooks configured for the account.</p>
         
         
         <div data-ice="description"><p>Get the list of webhooks configured for the account.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/sdk.js~VisWiz.html#instance-method-updateProjectNotifications">updateProjectNotifications</a></span></span><span class="code" data-ice="signature">(projectID: <span>string</span>, params: <span>object</span>): <span>Promise</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Update the notifications settings for a project.</p>
 </div>
       </div>
     </td>
@@ -692,7 +750,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber208">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber258">source</a></span></span>
     </span>
   </h3>
 
@@ -782,7 +840,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber295">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber345">source</a></span></span>
     </span>
   </h3>
 
@@ -1041,7 +1099,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber230">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber280">source</a></span></span>
     </span>
   </h3>
 
@@ -1184,7 +1242,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber251">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber301">source</a></span></span>
     </span>
   </h3>
 
@@ -1264,7 +1322,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber180">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber230">source</a></span></span>
     </span>
   </h3>
 
@@ -1344,7 +1402,7 @@ webhooks configured for the account.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber272">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber322">source</a></span></span>
     </span>
   </h3>
 
@@ -1404,6 +1462,86 @@ webhooks configured for the account.</p>
   <div class="example-doc" data-ice="exampleDoc">
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">const images = await client.getImages(&apos;gjVgsiWeh4TYVseqJsU6ev&apos;);</code></pre>
+    </div>
+</div>
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getProjectNotifications">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">getProjectNotifications</span><span class="code" data-ice="signature">(projectID: <span>string</span>): <span>Promise</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber180">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Get the notifications settings for a project.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">projectID</td>
+      <td data-ice="type" class="code"><span>string</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The requested project ID</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>Promise</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">const notifications = await client.getProjectNotifications(&apos;mwwuciQG7ETAmKoyRHgkGg&apos;);</code></pre>
     </div>
 </div>
 
@@ -1530,6 +1668,117 @@ webhooks configured for the account.</p>
   <div class="example-doc" data-ice="exampleDoc">
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">const webhooks = await client.getWebhooks();</code></pre>
+    </div>
+</div>
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-updateProjectNotifications">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">updateProjectNotifications</span><span class="code" data-ice="signature">(projectID: <span>string</span>, params: <span>object</span>): <span>Promise</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/sdk.js.html#lineNumber209">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Update the notifications settings for a project.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">projectID</td>
+      <td data-ice="type" class="code"><span>string</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The requested project ID</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">params</td>
+      <td data-ice="type" class="code"><span>object</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.emailEnabled</td>
+      <td data-ice="type" class="code"><span>string</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Controls if email reports are sent on new builds</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.slackEnabled</td>
+      <td data-ice="type" class="code"><span>string</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Controls if Slack notifications are sent on new builds</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">params.slackURL</td>
+      <td data-ice="type" class="code"><span>string</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>The Slack webhook URL to use for sending notifications</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>Promise</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">const build = await client.updateProjectNotifications(&apos;mwwuciQG7ETAmKoyRHgkGg&apos;, {
+  emailEnabled: false,
+  slackEnabled: true,
+  slackURL: &apos;https://hooks.slack.com/services/FOO/BAR/A18759GACAsgawg351ac&apos;,
+});</code></pre>
     </div>
 </div>
 

@@ -78,6 +78,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/sdk.js~viswiz#getprojectnotifications",
+    "class/src/sdk.js~VisWiz.html#instance-method-getProjectNotifications",
+    "src/sdk.js~VisWiz#getProjectNotifications",
+    "method"
+  ],
+  [
     "src/sdk.js~viswiz#getprojects",
     "class/src/sdk.js~VisWiz.html#instance-method-getProjects",
     "src/sdk.js~VisWiz#getProjects",
@@ -94,5 +100,11 @@ window.esdocSearchIndex = [
     "class/src/sdk.js~VisWiz.html#instance-member-server",
     "src/sdk.js~VisWiz#server",
     "member"
+  ],
+  [
+    "src/sdk.js~viswiz#updateprojectnotifications",
+    "class/src/sdk.js~VisWiz.html#instance-method-updateProjectNotifications",
+    "src/sdk.js~VisWiz#updateProjectNotifications",
+    "method"
   ]
 ]
