@@ -1,4 +1,4 @@
-import VisWiz from '../src/sdk';
+import VisWiz from '../index';
 import nock from '../utils/nock';
 
 let instance;

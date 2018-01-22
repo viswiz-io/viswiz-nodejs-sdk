@@ -13,7 +13,9 @@
     "node": ">=8.5.0"
   },
   "files": [
-    "dist/sdk.js"
+    "dist/sdk.js",
+    "es.js",
+    "index.js"
   ],
   "scripts": {
     "build": "babel src/ --out-dir dist/",

@@ -51,14 +51,22 @@ const client = new VisWiz('your-unique-api-key-here');
 client
 	.getProjects()
 	.then(projects => projects.find(project => project.name === 'Foo'))
-	.then(project => client.createBuild({
-		projectID: project.id,
-		name: 'Foo Bar',
-		revision: 'abcdef1234567890',
-	}))
-	.then(
-		build => client
+	.then(project =>
+		client.createBuild({
+			projectID: project.id,
+			name: 'Foo Bar',
+			revision: 'abcdef1234567890',
+		})
+	)
+	.then(build =>
+		client
 			.createImage(build.id, 'image-name', '/path/to/image.png')
 			.then(() => client.finishBuild(build.id))
 	);
+```
+
+### ES module
+
+```js
+import VisWiz from 'viswiz-sdk/es';
 ```

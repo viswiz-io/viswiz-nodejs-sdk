@@ -1,5 +1,5 @@
 import path from 'path';
-import VisWiz from '../src/sdk';
+import VisWiz from '../es';
 import nock from '../utils/nock';
 
 let instance;
