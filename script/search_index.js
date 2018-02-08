@@ -1,8 +1,8 @@
 window.esdocSearchIndex = [
   [
-    "viswiz-sdk~viswiz",
+    "viswiz-sdk/dist/sdk.js~viswiz",
     "class/src/sdk.js~VisWiz.html",
-    "<span>VisWiz</span> <span class=\"search-result-import-path\">viswiz-sdk</span>",
+    "<span>VisWiz</span> <span class=\"search-result-import-path\">viswiz-sdk/dist/sdk.js</span>",
     "class"
   ],
   [
