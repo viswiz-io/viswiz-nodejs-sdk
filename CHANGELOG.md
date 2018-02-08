@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.1.1...v1.1.2) (2018-02-08)
+
+
+### Bug Fixes
+
+* Package main and module exports :bug: ([da5bd85](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/da5bd85))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.1.0...v1.1.1) (2018-01-22)
 
