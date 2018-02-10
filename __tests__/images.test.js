@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 
 describe('images methods', () => {
-	const buildID = 1234;
+	const buildID = 'abcdef';
 	const image = {
 		name: 'Foo Bar',
 		originalURL: 'http://foo.com/bar.png',
@@ -25,7 +25,7 @@ describe('images methods', () => {
 			};
 
 			const scope = nock()
-				.get('/builds/1234/images')
+				.get(`/builds/${buildID}/images`)
 				.reply(200, body);
 
 			return instance.getImages(buildID).then(response => {
@@ -36,7 +36,7 @@ describe('images methods', () => {
 
 		it('rejects on error request', () => {
 			const scope = nock()
-				.get('/builds/1234/images')
+				.get(`/builds/${buildID}/images`)
 				.reply(401);
 
 			return instance.getImages(buildID).catch(response => {
@@ -60,7 +60,7 @@ describe('images methods', () => {
 			const body = image;
 
 			const scope = nock()
-				.post('/builds/1234/images', reqBody => {
+				.post(`/builds/${buildID}/images`, reqBody => {
 					return (
 						reqBody.match(/Content-Disposition: form-data; name="name"/) &&
 						reqBody.match(/test-file-name/) &&
@@ -82,7 +82,7 @@ describe('images methods', () => {
 
 		it('rejects on error request', () => {
 			const scope = nock()
-				.post('/builds/1234/images')
+				.post(`/builds/${buildID}/images`)
 				.reply(400);
 
 			return instance.createImage(buildID, 'foo', filePath).catch(response => {

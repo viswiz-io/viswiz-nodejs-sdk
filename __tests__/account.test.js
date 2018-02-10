@@ -13,7 +13,7 @@ describe('account methods', () => {
 	describe('getAccount', () => {
 		it('resolves on successfull request', () => {
 			const body = {
-				id: 123,
+				id: 'abcdef',
 				email: 'foo@bar.com',
 			};
 

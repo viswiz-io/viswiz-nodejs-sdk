@@ -12,6 +12,7 @@ beforeEach(() => {
 describe('projects methods', () => {
 	const projectID = 'acbdef';
 	const project = {
+		branch: 'master',
 		id: 'abcdef',
 		name: 'Foo Bar',
 		url: 'http://github.com/foo/bar',
@@ -47,6 +48,7 @@ describe('projects methods', () => {
 
 	describe('createProject', () => {
 		const payload = {
+			baselineBranch: 'master',
 			name: 'Foo Bar',
 			url: 'http://github.com/foo/bar',
 		};

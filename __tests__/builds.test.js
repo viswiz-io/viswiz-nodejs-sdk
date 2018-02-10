@@ -10,10 +10,11 @@ beforeEach(() => {
 });
 
 describe('builds methods', () => {
-	const buildID = 1234;
-	const projectID = 123;
+	const buildID = 'abcdef';
+	const projectID = 'foobar';
 	const build = {
-		id: 1234,
+		branch: 'master',
+		id: buildID,
 		name: 'Foo Bar',
 		revision: 'abcdef123456',
 	};
@@ -25,7 +26,7 @@ describe('builds methods', () => {
 			};
 
 			const scope = nock()
-				.get('/projects/123/builds')
+				.get(`/projects/${projectID}/builds`)
 				.reply(200, body);
 
 			return instance.getBuilds(projectID).then(response => {
@@ -36,7 +37,7 @@ describe('builds methods', () => {
 
 		it('rejects on error request', () => {
 			const scope = nock()
-				.get('/projects/123/builds')
+				.get(`/projects/${projectID}/builds`)
 				.reply(401);
 
 			return instance.getBuilds(projectID).catch(response => {
@@ -57,13 +58,14 @@ describe('builds methods', () => {
 		it('resolves on successfull request', () => {
 			const body = build;
 			const payload = {
+				branch: 'master',
 				projectID,
 				name: 'Foo Bar',
 				url: 'http://github.com/foo/bar',
 			};
 
 			const scope = nock()
-				.post('/projects/123/builds', payload)
+				.post(`/projects/${projectID}/builds`, payload)
 				.reply(200, body);
 
 			return instance.createBuild(payload).then(response => {
@@ -80,7 +82,7 @@ describe('builds methods', () => {
 			};
 
 			const scope = nock()
-				.post('/projects/123/builds', payload)
+				.post(`/projects/${projectID}/builds`, payload)
 				.reply(400);
 
 			return instance.createBuild(payload).catch(response => {
@@ -100,7 +102,7 @@ describe('builds methods', () => {
 	describe('finishBuild', () => {
 		it('resolves on successfull request', () => {
 			const scope = nock()
-				.post('/builds/1234/finish')
+				.post(`/builds/${buildID}/finish`)
 				.reply(200);
 
 			return instance.finishBuild(buildID).then(response => {
@@ -111,7 +113,7 @@ describe('builds methods', () => {
 
 		it('rejects on error request', () => {
 			const scope = nock()
-				.post('/builds/1234/finish')
+				.post(`/builds/${buildID}/finish`)
 				.reply(400);
 
 			return instance.finishBuild(buildID).catch(response => {
@@ -136,7 +138,7 @@ describe('builds methods', () => {
 			};
 
 			const scope = nock()
-				.get('/builds/1234/results')
+				.get(`/builds/${buildID}/results`)
 				.reply(200, body);
 
 			return instance.getBuildResults(buildID).then(response => {
@@ -147,7 +149,7 @@ describe('builds methods', () => {
 
 		it('rejects on error request', () => {
 			const scope = nock()
-				.get('/builds/1234/results')
+				.get(`/builds/${buildID}/results`)
 				.reply(401);
 
 			return instance.getBuildResults(buildID).catch(response => {

@@ -154,6 +154,7 @@ class VisWiz {
 	 *
 	 * @example
 	 * const project = await client.createProject({
+	 *   baselineBranch: 'master',
 	 *   name: 'My Amazing Project',
 	 *   url: 'http://github.com/amaze/project'
 	 * });
@@ -250,6 +251,7 @@ class VisWiz {
 	 *
 	 * @example
 	 * const build = await client.createBuild({
+	 *   branch: 'master',
 	 *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',
 	 *   name: 'New amazing changes',
 	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
