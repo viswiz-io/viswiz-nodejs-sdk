@@ -26,6 +26,7 @@ describe('images methods', () => {
 
 			const scope = nock()
 				.get(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getImages(buildID).then(response => {
@@ -37,6 +38,7 @@ describe('images methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getImages(buildID).catch(response => {
@@ -70,6 +72,7 @@ describe('images methods', () => {
 						reqBody.match(/Content-Type: application\/json/)
 					);
 				})
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance
@@ -83,6 +86,7 @@ describe('images methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
 			return instance.createImage(buildID, 'foo', filePath).catch(response => {

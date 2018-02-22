@@ -27,6 +27,7 @@ describe('builds methods', () => {
 
 			const scope = nock()
 				.get(`/projects/${projectID}/builds`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getBuilds(projectID).then(response => {
@@ -38,6 +39,7 @@ describe('builds methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get(`/projects/${projectID}/builds`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getBuilds(projectID).catch(response => {
@@ -66,6 +68,7 @@ describe('builds methods', () => {
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.createBuild(payload).then(response => {
@@ -83,6 +86,7 @@ describe('builds methods', () => {
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
 			return instance.createBuild(payload).catch(response => {
@@ -103,6 +107,7 @@ describe('builds methods', () => {
 		it('resolves on successfull request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/finish`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200);
 
 			return instance.finishBuild(buildID).then(response => {
@@ -114,6 +119,7 @@ describe('builds methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/finish`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
 			return instance.finishBuild(buildID).catch(response => {
@@ -139,6 +145,7 @@ describe('builds methods', () => {
 
 			const scope = nock()
 				.get(`/builds/${buildID}/results`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getBuildResults(buildID).then(response => {
@@ -150,6 +157,7 @@ describe('builds methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get(`/builds/${buildID}/results`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getBuildResults(buildID).catch(response => {

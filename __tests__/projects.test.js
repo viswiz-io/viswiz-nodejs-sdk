@@ -26,6 +26,7 @@ describe('projects methods', () => {
 
 			const scope = nock()
 				.get('/projects')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getProjects().then(response => {
@@ -37,6 +38,7 @@ describe('projects methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get('/projects')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getProjects().catch(response => {
@@ -58,6 +60,7 @@ describe('projects methods', () => {
 
 			const scope = nock()
 				.post('/projects', payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.createProject(payload).then(response => {
@@ -69,6 +72,7 @@ describe('projects methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.post('/projects', payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
 			return instance.createProject(payload).catch(response => {
@@ -95,6 +99,7 @@ describe('projects methods', () => {
 
 			const scope = nock()
 				.get(`/projects/${projectID}/notifications`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getProjectNotifications(projectID).then(response => {
@@ -106,6 +111,7 @@ describe('projects methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get(`/projects/${projectID}/notifications`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getProjectNotifications(projectID).catch(response => {
@@ -132,6 +138,7 @@ describe('projects methods', () => {
 		it('resolves on successfull request', () => {
 			const scope = nock()
 				.put(`/projects/${projectID}/notifications`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, notifications);
 
 			return instance
@@ -145,6 +152,7 @@ describe('projects methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.put(`/projects/${projectID}/notifications`)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance

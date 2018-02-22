@@ -19,6 +19,7 @@ describe('account methods', () => {
 
 			const scope = nock()
 				.get('/account')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getAccount().then(response => {
@@ -30,6 +31,7 @@ describe('account methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get('/account')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getAccount().catch(response => {
@@ -52,6 +54,7 @@ describe('account methods', () => {
 
 			const scope = nock()
 				.get('/webhooks')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.getWebhooks().then(response => {
@@ -63,6 +66,7 @@ describe('account methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.get('/webhooks')
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
 			return instance.getWebhooks().catch(response => {
@@ -85,6 +89,7 @@ describe('account methods', () => {
 
 			const scope = nock()
 				.post('/webhooks', payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
 			return instance.createWebhook(payload).then(response => {
@@ -96,6 +101,7 @@ describe('account methods', () => {
 		it('rejects on error request', () => {
 			const scope = nock()
 				.post('/webhooks', payload)
+				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
 			return instance.createWebhook(payload).catch(response => {
