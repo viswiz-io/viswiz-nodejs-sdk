@@ -3,22 +3,32 @@ import FormData from 'form-data';
 import got from 'got';
 import pkg from '../package.json';
 
-const SERVER_URL = 'https://api.viswiz.io';
-
 class VisWiz {
 	/**
 	 * @class VisWiz
 	 * @typicalname client
-	 * @param {string} apiKey - The API Key value for a VisWiz.io account
+	 * @param {string} [apiKey] - The API Key value for a VisWiz.io account
+	 *
+	 * If omitted, the environment variable `VISWIZ_API_KEY` will be used
 	 * @param {object} [options]
 	 * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
 	 *
 	 * @example
 	 * const client = new VisWiz('your-unique-api-key-here');
+	 *
+	 * // Assuming environment variable VISWIZ_API_KEY is set
+	 * const client = new VisWiz();
 	 */
 	constructor(apiKey, options) {
-		this.apiKey = apiKey || 'MISSING';
-		this.server = (options && options.server) || SERVER_URL;
+		this.apiKey = apiKey || process.env.VISWIZ_API_KEY;
+		this.server =
+			(options && options.server) ||
+			process.env.VISWIZ_SERVER ||
+			'https://api.viswiz.io';
+
+		if (!this.apiKey) {
+			throw new Error('Missing API key value!');
+		}
 	}
 
 	/**

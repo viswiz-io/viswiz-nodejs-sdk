@@ -14,6 +14,11 @@ Or using `npm`:
 $ npm install -D viswiz-sdk
 ```
 
+## Configuration
+
+The SDK can use an API key from the environment variable `VISWIZ_API_KEY`, so it
+does not need to be exposed in the code base.
+
 ## Usage
 
 Using `async`/`await` (node 8+):
@@ -46,7 +51,8 @@ Using `Promise`:
 ```js
 const VisWiz = require('viswiz-sdk');
 
-const client = new VisWiz('your-unique-api-key-here');
+// Assuming environment variable VISWIZ_API_KEY is set
+const client = new VisWiz();
 
 client
 	.getProjects()
