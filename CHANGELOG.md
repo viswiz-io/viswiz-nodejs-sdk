@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.1.2...v1.2.0) (2018-02-22)
+
+
+### Features
+
+* Fallback to use API key from environment variable ([4cbba7e](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/4cbba7e))
+* New method for simpler usage: buildWithImages ([f742055](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/f742055))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.1.1...v1.1.2) (2018-02-08)
 
