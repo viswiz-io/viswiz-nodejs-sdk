@@ -32,15 +32,12 @@ async function run() {
 	const projects = await client.getProjects();
 	const project = projects.find(project => project.name === 'Foo');
 
-	const build = await client.createBuild({
-		projectID: project.id,
+	await client.buildWithImages({
+		branch: 'master',
 		name: 'Foo Bar',
+		projectID: project.id,
 		revision: 'abcdef1234567890',
-	});
-
-	await client.createImage(build.id, 'image-name', '/path/to/image.png');
-
-	await client.finishBuild(build.id);
+	}, '/path/to/images');
 }
 
 run();
@@ -54,21 +51,14 @@ const VisWiz = require('viswiz-sdk');
 // Assuming environment variable VISWIZ_API_KEY is set
 const client = new VisWiz();
 
-client
-	.getProjects()
+client.getProjects()
 	.then(projects => projects.find(project => project.name === 'Foo'))
-	.then(project =>
-		client.createBuild({
-			projectID: project.id,
-			name: 'Foo Bar',
-			revision: 'abcdef1234567890',
-		})
-	)
-	.then(build =>
-		client
-			.createImage(build.id, 'image-name', '/path/to/image.png')
-			.then(() => client.finishBuild(build.id))
-	);
+	.then(project => client.buildWithImages({
+		branch: 'master',
+		name: 'Foo Bar',
+		projectID: project.id,
+		revision: 'abcdef1234567890',
+	}, '/path/to/images'));
 ```
 
 ### ES module

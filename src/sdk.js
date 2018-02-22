@@ -1,6 +1,8 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import glob from 'glob';
 import got from 'got';
+import path from 'path';
 import pkg from '../package.json';
 
 class VisWiz {
@@ -254,8 +256,11 @@ class VisWiz {
 	 * Create a new build for a project.
 	 *
 	 * @method
-	 * @param {object} params
-	 * @param {string} params.projectID - The requested project ID
+	 * @param {object} build
+	 * @param {string} build.branch - The branch name for this build
+	 * @param {string} build.projectID - The requested project ID
+	 * @param {string} build.name - The commit name for this build
+	 * @param {string} build.revision - The revision for this build
 	 * @returns {Promise}
 	 * @fulfil {object} - The new build object
 	 *
@@ -267,16 +272,17 @@ class VisWiz {
 	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
 	 * });
 	 */
-	createBuild(params) {
-		if (!params || !params.projectID) {
+	createBuild(build) {
+		if (!build || !build.projectID) {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		const path = `/projects/${params.projectID}/builds`;
+		const path = `/projects/${build.projectID}/builds`;
 
-		delete params.projectID;
+		const body = Object.assign({}, build);
+		delete body.projectID;
 
-		return this._request('POST', path, params, this._getHeaders());
+		return this._request('POST', path, body, this._getHeaders());
 	}
 
 	/**
@@ -380,6 +386,47 @@ class VisWiz {
 			form,
 			this._getHeaders(form.getHeaders())
 		);
+	}
+
+	/**
+	 * Creates a new build and uploads all images (`*.png`) found in a folder
+	 *
+	 * @method
+	 * @param {object} build
+	 * @param {string} build.branch - The branch name for this build
+	 * @param {string} build.projectID - The requested project ID
+	 * @param {string} build.name - The commit name for this build
+	 * @param {string} build.revision - The revision for this build
+	 * @param {object} folderPath
+	 * @returns {Promise}
+	 *
+	 * @example
+	 * await client.buildWithImages({
+	 *   branch: 'master',
+	 *   projectID: 'mwwuciQG7ETAmKoyRHgkGg',
+	 *   name: 'New amazing changes',
+	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
+	 * }, '/path/to/folder/with/images');
+	 */
+	buildWithImages(build, folderPath) {
+		let buildID;
+
+		const imageFiles = glob.sync(path.join(folderPath, '*.png'));
+		if (!imageFiles.length) {
+			return Promise.reject(new Error('No images files available!'));
+		}
+
+		return this.createBuild(build)
+			.then(build => {
+				buildID = build.id;
+
+				return imageFiles.reduce((chain, imageFile) => {
+					const name = path.basename(imageFile, '.png');
+
+					return chain.then(() => this.createImage(buildID, name, imageFile));
+				}, Promise.resolve());
+			})
+			.then(() => this.finishBuild(buildID));
 	}
 }
 

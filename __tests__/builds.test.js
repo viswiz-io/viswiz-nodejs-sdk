@@ -61,17 +61,17 @@ describe('builds methods', () => {
 			const body = build;
 			const payload = {
 				branch: 'master',
-				projectID,
 				name: 'Foo Bar',
 				url: 'http://github.com/foo/bar',
 			};
+			const params = Object.assign({ projectID }, payload);
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.createBuild(payload).then(response => {
+			return instance.createBuild(params).then(response => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -79,17 +79,18 @@ describe('builds methods', () => {
 
 		it('rejects on error request', () => {
 			const payload = {
-				projectID,
+				branch: 'master',
 				name: 'Foo Bar',
 				url: 'http://github.com/foo/bar',
 			};
+			const params = Object.assign({ projectID }, payload);
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createBuild(payload).catch(response => {
+			return instance.createBuild(params).catch(response => {
 				expect(response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
