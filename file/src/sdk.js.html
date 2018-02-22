@@ -37,25 +37,37 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/sdk.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import fs from &apos;fs&apos;;
 import FormData from &apos;form-data&apos;;
+import glob from &apos;glob&apos;;
 import got from &apos;got&apos;;
+import path from &apos;path&apos;;
 import pkg from &apos;../package.json&apos;;
-
-const SERVER_URL = &apos;https://api.viswiz.io&apos;;
 
 class VisWiz {
 	/**
 	 * @class VisWiz
 	 * @typicalname client
-	 * @param {string} apiKey - The API Key value for a VisWiz.io account
+	 * @param {string} [apiKey] - The API Key value for a VisWiz.io account
+	 *
+	 * If omitted, the environment variable `VISWIZ_API_KEY` will be used
 	 * @param {object} [options]
 	 * @param {string} [options.server=https://api.viswiz.io] - The server URL prefix for all requests
 	 *
 	 * @example
 	 * const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
+	 *
+	 * // Assuming environment variable VISWIZ_API_KEY is set
+	 * const client = new VisWiz();
 	 */
 	constructor(apiKey, options) {
-		this.apiKey = apiKey || &apos;MISSING&apos;;
-		this.server = (options &amp;&amp; options.server) || SERVER_URL;
+		this.apiKey = apiKey || process.env.VISWIZ_API_KEY;
+		this.server =
+			(options &amp;&amp; options.server) ||
+			process.env.VISWIZ_SERVER ||
+			&apos;https://api.viswiz.io&apos;;
+
+		if (!this.apiKey) {
+			throw new Error(&apos;Missing API key value!&apos;);
+		}
 	}
 
 	/**
@@ -191,6 +203,7 @@ class VisWiz {
 	 *
 	 * @example
 	 * const project = await client.createProject({
+	 *   baselineBranch: &apos;master&apos;,
 	 *   name: &apos;My Amazing Project&apos;,
 	 *   url: &apos;http://github.com/amaze/project&apos;
 	 * });
@@ -280,28 +293,33 @@ class VisWiz {
 	 * Create a new build for a project.
 	 *
 	 * @method
-	 * @param {object} params
-	 * @param {string} params.projectID - The requested project ID
+	 * @param {object} build
+	 * @param {string} build.branch - The branch name for this build
+	 * @param {string} build.projectID - The requested project ID
+	 * @param {string} build.name - The commit name for this build
+	 * @param {string} build.revision - The revision for this build
 	 * @returns {Promise}
 	 * @fulfil {object} - The new build object
 	 *
 	 * @example
 	 * const build = await client.createBuild({
+	 *   branch: &apos;master&apos;,
 	 *   projectID: &apos;mwwuciQG7ETAmKoyRHgkGg&apos;,
 	 *   name: &apos;New amazing changes&apos;,
 	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
 	 * });
 	 */
-	createBuild(params) {
-		if (!params || !params.projectID) {
+	createBuild(build) {
+		if (!build || !build.projectID) {
 			return Promise.reject(new Error(&apos;Missing required parameter: projectID&apos;));
 		}
 
-		const path = `/projects/${params.projectID}/builds`;
+		const path = `/projects/${build.projectID}/builds`;
 
-		delete params.projectID;
+		const body = Object.assign({}, build);
+		delete body.projectID;
 
-		return this._request(&apos;POST&apos;, path, params, this._getHeaders());
+		return this._request(&apos;POST&apos;, path, body, this._getHeaders());
 	}
 
 	/**
@@ -405,6 +423,47 @@ class VisWiz {
 			form,
 			this._getHeaders(form.getHeaders())
 		);
+	}
+
+	/**
+	 * Creates a new build and uploads all images (`*.png`) found in a folder
+	 *
+	 * @method
+	 * @param {object} build
+	 * @param {string} build.branch - The branch name for this build
+	 * @param {string} build.projectID - The requested project ID
+	 * @param {string} build.name - The commit name for this build
+	 * @param {string} build.revision - The revision for this build
+	 * @param {object} folderPath
+	 * @returns {Promise}
+	 *
+	 * @example
+	 * await client.buildWithImages({
+	 *   branch: &apos;master&apos;,
+	 *   projectID: &apos;mwwuciQG7ETAmKoyRHgkGg&apos;,
+	 *   name: &apos;New amazing changes&apos;,
+	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
+	 * }, &apos;/path/to/folder/with/images&apos;);
+	 */
+	buildWithImages(build, folderPath) {
+		let buildID;
+
+		const imageFiles = glob.sync(path.join(folderPath, &apos;*.png&apos;));
+		if (!imageFiles.length) {
+			return Promise.reject(new Error(&apos;No images files available!&apos;));
+		}
+
+		return this.createBuild(build)
+			.then(build =&gt; {
+				buildID = build.id;
+
+				return imageFiles.reduce((chain, imageFile) =&gt; {
+					const name = path.basename(imageFile, &apos;.png&apos;);
+
+					return chain.then(() =&gt; this.createImage(buildID, name, imageFile));
+				}, Promise.resolve());
+			})
+			.then(() =&gt; this.finishBuild(buildID));
 	}
 }
 

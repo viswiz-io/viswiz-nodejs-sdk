@@ -18,6 +18,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/sdk.js~viswiz#buildwithimages",
+    "class/src/sdk.js~VisWiz.html#instance-method-buildWithImages",
+    "src/sdk.js~VisWiz#buildWithImages",
+    "method"
+  ],
+  [
     "src/sdk.js~viswiz#constructor",
     "class/src/sdk.js~VisWiz.html#instance-constructor-constructor",
     "src/sdk.js~VisWiz#constructor",

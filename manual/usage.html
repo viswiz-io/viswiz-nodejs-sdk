@@ -33,6 +33,7 @@
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/usage.html"><a href="manual/usage.html" data-ice="link">Using the SDK</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage.html"><a href="manual/usage.html#installation" data-ice="link">Installation</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/usage.html"><a href="manual/usage.html#configuration" data-ice="link">Configuration</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/usage.html"><a href="manual/usage.html#usage" data-ice="link">Usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/usage.html"><a href="manual/usage.html#es-module" data-ice="link">ES module</a></li>
 </ul>
@@ -41,6 +42,8 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#change-log" data-ice="link">Change Log</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-1-2---v1-2-0--1-2-0--a---2018-02-22-" data-ice="link">1.2.0 (2018-02-22)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#features" data-ice="link">Features</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-1-1---v1-1-2--1-1-2--a---2018-02-08-" data-ice="link">1.1.2 (2018-02-08)</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#bug-fixes" data-ice="link">Bug Fixes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-1-0---v1-1-1--1-1-1--a---2018-01-22-" data-ice="link">1.1.1 (2018-01-22)</a></li>
@@ -67,7 +70,9 @@
 <pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
 </code></pre><p>Or using <code>npm</code>:</p>
 <pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
-</code></pre><h2 id="usage">Usage</h2><p>Using <code>async</code>/<code>await</code> (node 8+):</p>
+</code></pre><h2 id="configuration">Configuration</h2><p>The SDK can use an API key from the environment variable <code>VISWIZ_API_KEY</code>, so it
+does not need to be exposed in the code base.</p>
+<h2 id="usage">Usage</h2><p>Using <code>async</code>/<code>await</code> (node 8+):</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
 
 async function run() {
@@ -76,15 +81,12 @@ async function run() {
     const projects = await client.getProjects();
     const project = projects.find(project =&gt; project.name === &apos;Foo&apos;);
 
-    const build = await client.createBuild({
-        projectID: project.id,
+    await client.buildWithImages({
+        branch: &apos;master&apos;,
         name: &apos;Foo Bar&apos;,
+        projectID: project.id,
         revision: &apos;abcdef1234567890&apos;,
-    });
-
-    await client.createImage(build.id, &apos;image-name&apos;, &apos;/path/to/image.png&apos;);
-
-    await client.finishBuild(build.id);
+    }, &apos;/path/to/images&apos;);
 }
 
 run();</code>
@@ -92,23 +94,17 @@ run();</code>
 <p>Using <code>Promise</code>:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
 
-const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
+// Assuming environment variable VISWIZ_API_KEY is set
+const client = new VisWiz();
 
-client
-    .getProjects()
+client.getProjects()
     .then(projects =&gt; projects.find(project =&gt; project.name === &apos;Foo&apos;))
-    .then(project =&gt;
-        client.createBuild({
-            projectID: project.id,
-            name: &apos;Foo Bar&apos;,
-            revision: &apos;abcdef1234567890&apos;,
-        })
-    )
-    .then(build =&gt;
-        client
-            .createImage(build.id, &apos;image-name&apos;, &apos;/path/to/image.png&apos;)
-            .then(() =&gt; client.finishBuild(build.id))
-    );</code>
+    .then(project =&gt; client.buildWithImages({
+        branch: &apos;master&apos;,
+        name: &apos;Foo Bar&apos;,
+        projectID: project.id,
+        revision: &apos;abcdef1234567890&apos;,
+    }, &apos;/path/to/images&apos;));</code>
 </code></pre>
 <h3 id="es-module">ES module</h3><pre><code class="lang-js"><code class="source-code prettyprint">import VisWiz from &apos;viswiz-sdk/es&apos;;</code>
 </code></pre>
