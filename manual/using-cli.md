@@ -69,5 +69,5 @@ $ viswiz build --help
 On popular CI services, assuming `VISWIZ_API_KEY` and `VISWIZ_PROJECT_ID` values are configured:
 
 ```
-$ viswiz --image-dir ./path/to/images/directory
+$ viswiz build --image-dir ./path/to/images/directory
 ```

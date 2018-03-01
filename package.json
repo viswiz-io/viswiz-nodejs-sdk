@@ -13,6 +13,9 @@
   "engines": {
     "node": ">=8.5.0"
   },
+  "bin": {
+    "viswiz": "./bin/viswiz"
+  },
   "files": [
     "bin/",
     "dist/",
