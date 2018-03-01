@@ -79,49 +79,50 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="using-the-sdk">Using the SDK</h1><h2 id="installation">Installation</h2><p>Install the module using <code>yarn</code>:</p>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="using-the-cli">Using the CLI</h1><h2 id="installation">Installation</h2><p>Install the module using <code>yarn</code>:</p>
 <pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
 </code></pre><p>Or using <code>npm</code>:</p>
 <pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
-</code></pre><h2 id="configuration">Configuration</h2><p>The SDK can use an API key from the environment variable <code>VISWIZ_API_KEY</code>, so it
-does not need to be exposed in the code base.</p>
-<h2 id="usage">Usage</h2><p>Using <code>async</code>/<code>await</code> (node 8+):</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
+</code></pre><h2 id="configuration">Configuration</h2><p>The following environment keys are used when their corresponding flags are missing:</p>
+<ul>
+<li><code>VISWIZ_API_KEY</code> - for the <code>api-key</code> flag</li>
+<li><code>VISWIZ_PROJECT_ID</code> - for the <code>project</code> flag</li>
+</ul>
+<p>CI environment variables for popular CI services are also used for the <code>branch</code>, <code>message</code> and
+<code>revision</code> flags.</p>
+<h2 id="options">Options</h2><pre><code><code class="source-code prettyprint">$ viswiz --help
 
-async function run() {
-    const client = new VisWiz(&apos;your-unique-api-key-here&apos;);
+  Usage: viswiz [options] [command]
 
-    const projects = await client.getProjects();
-    const project = projects.find(project =&gt; project.name === &apos;Foo&apos;);
 
-    await client.buildWithImages({
-        branch: &apos;master&apos;,
-        name: &apos;Foo Bar&apos;,
-        projectID: project.id,
-        revision: &apos;abcdef1234567890&apos;,
-    }, &apos;/path/to/images&apos;);
-}
+  Options:
 
-run();</code>
-</code></pre>
-<p>Using <code>Promise</code>:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
+    -V, --version              output the version number
+    -k, --api-key [apiKey]     The API key of a VisWiz account to use. Defaults to VISWIZ_API_KEY env.
+    -p, --project [projectID]  The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.
+    -h, --help                 output usage information
 
-// Assuming environment variable VISWIZ_API_KEY is set
-const client = new VisWiz();
 
-client.getProjects()
-    .then(projects =&gt; projects.find(project =&gt; project.name === &apos;Foo&apos;))
-    .then(project =&gt; client.buildWithImages({
-        branch: &apos;master&apos;,
-        name: &apos;Foo Bar&apos;,
-        projectID: project.id,
-        revision: &apos;abcdef1234567890&apos;,
-    }, &apos;/path/to/images&apos;));</code>
-</code></pre>
-<h3 id="es-module">ES module</h3><pre><code class="lang-js"><code class="source-code prettyprint">import VisWiz from &apos;viswiz-sdk/es&apos;;</code>
-</code></pre>
-</div>
+  Commands:
+
+    build [options]  Creates a new build on VisWiz.io and sends images for regression testing.</code>
+</code></pre><h3 id="-code-build--code--options"><code>build</code> options</h3><pre><code><code class="source-code prettyprint">$ viswiz build --help
+
+  Usage: build [options]
+
+  Creates a new build on VisWiz.io and sends images for regression testing.
+
+
+  Options:
+
+    -i, --image-dir &lt;path&gt;          The path to a directory with images used for the build
+    -b, --branch [branch name]      The branch name for the build. Auto-detected on popular CIs.
+    -m, --message [commit message]  The commit message for the build. Auto-detected on popular CIs.
+    -r, --revision [rev]            The revision for the build. Auto-detected on popular CIs.
+    -h, --help                      output usage information</code>
+</code></pre><h2 id="usage">Usage</h2><p>On popular CI services, assuming <code>VISWIZ_API_KEY</code> and <code>VISWIZ_PROJECT_ID</code> values are configured:</p>
+<pre><code><code class="source-code prettyprint">$ viswiz --image-dir ./path/to/images/directory</code>
+</code></pre></div>
 </div>
 
 <footer class="footer">

@@ -41,7 +41,20 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/using-cli.html"><a href="manual/using-cli.html" data-ice="link">Using the CLI</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#installation" data-ice="link">Installation</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#configuration" data-ice="link">Configuration</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#options" data-ice="link">Options</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/using-cli.html"><a href="manual/using-cli.html#-code-build--code--options" data-ice="link">build options</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#usage" data-ice="link">Usage</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#change-log" data-ice="link">Change Log</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-2-0---v1-3-0--1-3-0--a---2018-03-01-" data-ice="link">1.3.0 (2018-03-01)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#features" data-ice="link">Features</a></li>
 <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-1-2---v1-2-0--1-2-0--a---2018-02-22-" data-ice="link">1.2.0 (2018-02-22)</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#features" data-ice="link">Features</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v1-1-1---v1-1-2--1-1-2--a---2018-02-08-" data-ice="link">1.1.2 (2018-02-08)</a></li>
@@ -75,7 +88,7 @@
     
   <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Using the SDK</h1><h2>Installation</h2><p>Install the SDK module using <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
+        <div data-ice="card"><h1>Using the SDK</h1><h2>Installation</h2><p>Install the module using <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
 </code></pre><p>Or using <code>npm</code>:</p><pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
 </code></pre><h2>Configuration</h2><p>The SDK can use an API key from the environment variable <code>VISWIZ_API_KEY</code>, so it
 does not need to be exposed in the code base.</p><h2>Usage</h2><p>Using <code>async</code>/<code>await</code> (node 8+):</p><pre><code class="lang-js"><code class="source-code prettyprint">const VisWiz = require(&apos;viswiz-sdk&apos;);
@@ -111,6 +124,49 @@ client.getProjects()
 </code></pre><h3>ES module</h3><pre><code class="lang-js"><code class="source-code prettyprint">import VisWiz from &apos;viswiz-sdk/es&apos;;</code>
 </code></pre></div>
         <a data-ice="link" href="manual/usage.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Using the CLI</h1><h2>Installation</h2><p>Install the module using <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
+</code></pre><p>Or using <code>npm</code>:</p><pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
+</code></pre><h2>Configuration</h2><p>The following environment keys are used when their corresponding flags are missing:</p><ul>
+<li><code>VISWIZ_API_KEY</code> - for the <code>api-key</code> flag</li>
+<li><code>VISWIZ_PROJECT_ID</code> - for the <code>project</code> flag</li>
+</ul><p>CI environment variables for popular CI services are also used for the <code>branch</code>, <code>message</code> and
+<code>revision</code> flags.</p><h2>Options</h2><pre><code><code class="source-code prettyprint">$ viswiz --help
+
+  Usage: viswiz [options] [command]
+
+
+  Options:
+
+    -V, --version              output the version number
+    -k, --api-key [apiKey]     The API key of a VisWiz account to use. Defaults to VISWIZ_API_KEY env.
+    -p, --project [projectID]  The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.
+    -h, --help                 output usage information
+
+
+  Commands:
+
+    build [options]  Creates a new build on VisWiz.io and sends images for regression testing.</code>
+</code></pre><h3><code>build</code> options</h3><pre><code><code class="source-code prettyprint">$ viswiz build --help
+
+  Usage: build [options]
+
+  Creates a new build on VisWiz.io and sends images for regression testing.
+
+
+  Options:
+
+    -i, --image-dir &lt;path&gt;          The path to a directory with images used for the build
+    -b, --branch [branch name]      The branch name for the build. Auto-detected on popular CIs.
+    -m, --message [commit message]  The commit message for the build. Auto-detected on popular CIs.
+    -r, --revision [rev]            The revision for the build. Auto-detected on popular CIs.
+    -h, --help                      output usage information</code>
+</code></pre><h2>Usage</h2><p>On popular CI services, assuming <code>VISWIZ_API_KEY</code> and <code>VISWIZ_PROJECT_ID</code> values are configured:</p><pre><code><code class="source-code prettyprint">$ viswiz --image-dir ./path/to/images/directory</code>
+</code></pre></div>
+        <a data-ice="link" href="manual/using-cli.html"></a>
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
