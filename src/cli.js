@@ -90,7 +90,7 @@ const commands = {
 		}/results`;
 
 		log('Done!');
-		log('Build report will be available at:', url);
+		log(`Build report will be available at: ${url}`);
 
 		return 'OK';
 	},
