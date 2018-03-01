@@ -26,5 +26,5 @@ The change log can be found here:
 Author: [VisWiz.io](https://www.viswiz.io/).
 
 MIT License, see the included
-[License.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/License.md)
+[LICENSE.md](https://github.com/viswiz-io/viswiz-nodejs-sdk/blob/master/LICENSE.md)
 file.
