@@ -14,7 +14,8 @@
     "node": ">=8.5.0"
   },
   "files": [
-    "dist/sdk.js",
+    "bin/",
+    "dist/",
     "es.js",
     "index.js"
   ],
@@ -34,6 +35,8 @@
     "test": "yarn test:jest"
   },
   "dependencies": {
+    "commander": "2.14.1",
+    "env-ci": "1.4.1",
     "form-data": "^2.3.1",
     "glob": "7.1.2",
     "got": "^8.0.1"
