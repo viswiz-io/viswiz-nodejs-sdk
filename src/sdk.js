@@ -426,7 +426,8 @@ class VisWiz {
 					return chain.then(() => this.createImage(buildID, name, imageFile));
 				}, Promise.resolve());
 			})
-			.then(() => this.finishBuild(buildID));
+			.then(() => this.finishBuild(buildID))
+			.then(() => buildID);
 	}
 }
 

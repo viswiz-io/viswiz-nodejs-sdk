@@ -2,7 +2,7 @@
 
 ## Installation
 
-Install the SDK module using `yarn`:
+Install the module using `yarn`:
 
 ```
 $ yarn add -D viswiz-sdk
