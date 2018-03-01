@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.2.0...v1.3.0) (2018-03-01)
+
+
+### Features
+
+* New CLI tool :rocket: ([9b0ff0f](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/9b0ff0f))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.1.2...v1.2.0) (2018-02-22)
 
