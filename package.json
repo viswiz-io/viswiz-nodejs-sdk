@@ -10,6 +10,15 @@
     "url": "https://github.com/viswiz-io/viswiz-nodejs-sdk"
   },
   "license": "MIT",
+  "keywords": [
+    "visual regression testing",
+    "visual testing",
+    "automated testing",
+    "automation",
+    "testing",
+    "screenshot",
+    "sdk"
+  ],
   "engines": {
     "node": ">=8.5.0"
   },
