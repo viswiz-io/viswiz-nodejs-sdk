@@ -426,7 +426,7 @@ class VisWiz {
 	}
 
 	/**
-	 * Creates a new build and uploads all images (`*.png`) found in a folder
+	 * Creates a new build and uploads all images (`*.png`) found in a folder (scanned recursively)
 	 *
 	 * @method
 	 * @param {object} build
@@ -448,7 +448,7 @@ class VisWiz {
 	buildWithImages(build, folderPath) {
 		let buildID;
 
-		const imageFiles = glob.sync(path.join(folderPath, &apos;*.png&apos;));
+		const imageFiles = glob.sync(path.join(folderPath, &apos;**/*.png&apos;));
 		if (!imageFiles.length) {
 			return Promise.reject(new Error(&apos;No images files available!&apos;));
 		}
@@ -458,7 +458,11 @@ class VisWiz {
 				buildID = build.id;
 
 				return imageFiles.reduce((chain, imageFile) =&gt; {
-					const name = path.basename(imageFile, &apos;.png&apos;);
+					const name = imageFile
+						.replace(folderPath, &apos;&apos;)
+						.replace(/^[/\\]/, &apos;&apos;)
+						.replace(/\.png$/i, &apos;&apos;)
+						.replace(/[/\\]/g, &apos;__&apos;);
 
 					return chain.then(() =&gt; this.createImage(buildID, name, imageFile));
 				}, Promise.resolve());
