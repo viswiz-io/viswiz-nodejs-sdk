@@ -6,15 +6,13 @@ const FIXTURES = path.resolve(__dirname, '..', '__fixtures__');
 
 let instance;
 
-function validateRequestBody(body, fileName) {
+function validateRequestBody(body, imageName, fileName) {
 	const raw = Buffer.from(body, 'hex').toString();
 	return (
-		raw.match(/Content-Disposition: form-data; name="name"/) &&
-		raw.indexOf(fileName) > -1 &&
-		raw.match(
-			new RegExp(
-				`Content-Disposition: form-data; name="image"; filename="${fileName}\\.png"`
-			)
+		raw.includes('Content-Disposition: form-data; name="name"') &&
+		raw.includes(imageName) &&
+		raw.includes(
+			`Content-Disposition: form-data; name="image"; filename="${fileName}"`
 		)
 	);
 }
@@ -53,17 +51,29 @@ describe('buildWithImages', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, Object.assign({ id: buildID }, build))
 				.post(`/builds/${buildID}/images`, reqBody =>
-					validateRequestBody(reqBody, 'viswiz-100x100-white')
+					validateRequestBody(
+						reqBody,
+						'viswiz-100x100-white',
+						'viswiz-100x100-white.png'
+					)
 				)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, image)
 				.post(`/builds/${buildID}/images`, reqBody =>
-					validateRequestBody(reqBody, 'viswiz-favicon-32')
+					validateRequestBody(
+						reqBody,
+						'viswiz-favicon-32',
+						'viswiz-favicon-32.png'
+					)
 				)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, image)
 				.post(`/builds/${buildID}/images`, reqBody =>
-					validateRequestBody(reqBody, 'viswiz-favicon-48')
+					validateRequestBody(
+						reqBody,
+						'subfolder__viswiz-favicon-48',
+						'viswiz-favicon-48.png'
+					)
 				)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, image)

@@ -114,7 +114,7 @@ function run(argv) {
 		)
 		.option(
 			'-i, --image-dir <path>',
-			'The path to a directory with images used for the build'
+			'The path to a directory (scanned recursively) with images used for the build.'
 		)
 		.option(
 			'-b, --branch [branch name]',
