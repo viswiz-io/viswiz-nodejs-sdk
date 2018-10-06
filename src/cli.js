@@ -128,7 +128,12 @@ function run(argv) {
 			'-r, --revision [rev]',
 			'The revision for the build. Auto-detected on popular CIs.'
 		)
-		.action(cmd => commands.build(program, cmd));
+		.action(cmd =>
+			commands.build(program, cmd).catch(err => {
+				console.error('Error:', err.message);
+				process.exit(1);
+			})
+		);
 
 	program.parse(argv);
 }

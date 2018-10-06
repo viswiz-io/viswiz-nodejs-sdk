@@ -88,7 +88,7 @@ describe('buildWithImages', () => {
 
 		it('throws when no files', async () => {
 			await expect(instance.buildWithImages(build, __dirname)).rejects.toThrow(
-				'images'
+				'No image files found in image directory!'
 			);
 		});
 

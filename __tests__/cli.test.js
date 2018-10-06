@@ -144,5 +144,13 @@ describe('cli', () => {
 
 			expect(result).toContain('Missing commit revision');
 		});
+
+		it('errors when no files are available', () => {
+			cmd.imageDir = __dirname;
+
+			return expect(build(program, cmd)).rejects.toThrow(
+				'No image files found in image directory!'
+			);
+		});
 	});
 });

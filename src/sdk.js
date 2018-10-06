@@ -413,7 +413,9 @@ class VisWiz {
 
 		const imageFiles = glob.sync(path.join(folderPath, '**/*.png'));
 		if (!imageFiles.length) {
-			return Promise.reject(new Error('No images files available!'));
+			return Promise.reject(
+				new Error('No image files found in image directory!')
+			);
 		}
 
 		return this.createBuild(build)
