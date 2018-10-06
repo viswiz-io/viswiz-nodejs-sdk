@@ -85,9 +85,7 @@ const commands = {
 			cmd.imageDir
 		);
 
-		const url = `https://app.viswiz.io/projects/${project}/build/${
-			buildID
-		}/results`;
+		const url = `https://app.viswiz.io/projects/${project}/build/${buildID}/results`;
 
 		log('Done!');
 		log(`Build report will be available at: ${url}`);

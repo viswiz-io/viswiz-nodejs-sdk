@@ -13,9 +13,7 @@ function validateRequestBody(body, fileName) {
 		raw.indexOf(fileName) > -1 &&
 		raw.match(
 			new RegExp(
-				`Content-Disposition: form-data; name="image"; filename="${
-					fileName
-				}\\.png"`
+				`Content-Disposition: form-data; name="image"; filename="${fileName}\\.png"`
 			)
 		)
 	);
