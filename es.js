@@ -1,4 +1,4 @@
-import VisWiz from './dist/sdk';
+import VisWiz from './src/sdk';
 
 // Export ES module format
 export default VisWiz;

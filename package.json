@@ -28,6 +28,7 @@
   "files": [
     "bin/",
     "dist/",
+    "src/*.js",
     "es.js",
     "index.js"
   ],
