@@ -38,7 +38,7 @@ const commands = {
 
 		const buildID = await client.buildWithImages(
 			{
-				branch: cmd.branch || ci.branch,
+				branch: cmd.branch || ci.prBranch || ci.branch,
 				name: cmd.message || ci.message,
 				projectID: project,
 				revision: cmd.revision || ci.commit,
