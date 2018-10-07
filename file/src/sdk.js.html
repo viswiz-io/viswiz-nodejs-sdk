@@ -435,40 +435,55 @@ class VisWiz {
 	 * @param {string} build.name - The commit name for this build
 	 * @param {string} build.revision - The revision for this build
 	 * @param {object} folderPath
+	 * @param {function} [progressCallback] - called with parameters: (current, total)
 	 * @returns {Promise}
 	 *
 	 * @example
-	 * await client.buildWithImages({
+	 * await client.buildFolder({
 	 *   branch: &apos;master&apos;,
 	 *   projectID: &apos;mwwuciQG7ETAmKoyRHgkGg&apos;,
 	 *   name: &apos;New amazing changes&apos;,
 	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
 	 * }, &apos;/path/to/folder/with/images&apos;);
 	 */
-	buildWithImages(build, folderPath) {
+	buildFolder(build, folderPath, progressCallback) {
 		let buildID;
 
 		const imageFiles = glob.sync(path.join(folderPath, &apos;**/*.png&apos;));
 		if (!imageFiles.length) {
-			return Promise.reject(new Error(&apos;No images files available!&apos;));
+			return Promise.reject(
+				new Error(&apos;No image files found in image directory!&apos;)
+			);
 		}
+		const total = imageFiles.length;
 
 		return this.createBuild(build)
 			.then(build =&gt; {
 				buildID = build.id;
 
-				return imageFiles.reduce((chain, imageFile) =&gt; {
+				return imageFiles.reduce((chain, imageFile, index) =&gt; {
 					const name = imageFile
 						.replace(folderPath, &apos;&apos;)
 						.replace(/^[/\\]/, &apos;&apos;)
 						.replace(/\.png$/i, &apos;&apos;)
 						.replace(/[/\\]/g, &apos;__&apos;);
 
-					return chain.then(() =&gt; this.createImage(buildID, name, imageFile));
+					return chain
+						.then(() =&gt; this.createImage(buildID, name, imageFile))
+						.then(() =&gt; progressCallback &amp;&amp; progressCallback(index + 1, total));
 				}, Promise.resolve());
 			})
 			.then(() =&gt; this.finishBuild(buildID))
 			.then(() =&gt; buildID);
+	}
+
+	/**
+	 * Alias for `buildFolder`
+	 *
+	 * @method
+	 */
+	buildWithImages(build, folderPath, progressCallback) {
+		return this.buildFolder(build, folderPath, progressCallback);
 	}
 }
 
