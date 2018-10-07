@@ -21,8 +21,8 @@ The following environment keys are used when their corresponding flags are missi
 - `VISWIZ_API_KEY` - for the `api-key` flag
 - `VISWIZ_PROJECT_ID` - for the `project` flag
 
-CI environment variables for popular CI services are also used for the `branch`, `message` and
-`revision` flags.
+CI environment variables for popular [CI services](https://www.npmjs.com/package/env-ci#supported-ci)
+are also used for the `branch`, `message` and `revision` flags.
 
 ## Options
 
@@ -57,7 +57,7 @@ $ viswiz build --help
 
   Options:
 
-    -i, --image-dir <path>          The path to a directory with images used for the build
+    -i, --image-dir <path>          The path to a directory (scanned recursively) with images used for the build.
     -b, --branch [branch name]      The branch name for the build. Auto-detected on popular CIs.
     -m, --message [commit message]  The commit message for the build. Auto-detected on popular CIs.
     -r, --revision [rev]            The revision for the build. Auto-detected on popular CIs.
@@ -66,7 +66,8 @@ $ viswiz build --help
 
 ## Usage
 
-On popular CI services, assuming `VISWIZ_API_KEY` and `VISWIZ_PROJECT_ID` values are configured:
+On popular [CI services](https://www.npmjs.com/package/env-ci#supported-ci), assuming
+`VISWIZ_API_KEY` and `VISWIZ_PROJECT_ID` values are configured in the CI environment:
 
 ```
 $ viswiz build --image-dir ./path/to/images/directory

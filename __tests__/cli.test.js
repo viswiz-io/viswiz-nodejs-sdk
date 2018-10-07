@@ -1,6 +1,9 @@
+jest.mock('../src/Progress');
+
 import path from 'path';
 import { commands } from '../src/cli';
 import nock from '../utils/nock';
+import { instances } from '../src/Progress';
 
 const FIXTURES = path.resolve(__dirname, '..', '__fixtures__');
 
@@ -73,6 +76,8 @@ describe('cli', () => {
 			const result = await build(program, cmd);
 
 			expect(result).toContain('OK');
+			expect(instances[instances.length - 1].current).toBe(3);
+			expect(instances[instances.length - 1].total).toBe(3);
 			expect(scope.isDone()).toBeTruthy();
 		});
 
@@ -91,6 +96,8 @@ describe('cli', () => {
 			const result = await build(program, cmd);
 
 			expect(result).toContain('OK');
+			expect(instances[instances.length - 1].current).toBe(3);
+			expect(instances[instances.length - 1].total).toBe(3);
 			expect(scope.isDone()).toBeTruthy();
 		});
 

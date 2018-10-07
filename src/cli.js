@@ -1,50 +1,10 @@
 /* eslint no-console: 0 */
 
 import program from 'commander';
-import envCI from 'env-ci';
 import VisWiz from './sdk';
+import Progress from './Progress';
+import { error, getCI, log } from './utils';
 import pkg from '../package.json';
-
-function log(msg) {
-	if (process.env.NODE_ENV === 'test') {
-		return msg;
-	}
-	console.log(msg);
-}
-
-function error(msg, cmd) {
-	if (process.env.NODE_ENV === 'test') {
-		return msg;
-	}
-
-	console.error(msg);
-	if (cmd) {
-		cmd.outputHelp();
-	}
-	process.exit(1);
-}
-
-function getCI() {
-	const ci = envCI();
-
-	const messageMap = {
-		appveyor: 'APPVEYOR_REPO_COMMIT_MESSAGE',
-		bitrise: 'BITRISE_GIT_MESSAGE',
-		buildkite: 'BUILDKITE_MESSAGE',
-		codeship: 'CI_MESSAGE',
-		drone: 'DRONE_COMMIT_MESSAGE',
-		shippable: 'COMMIT_MESSAGE',
-		travis: 'TRAVIS_COMMIT_MESSAGE',
-	};
-	ci.message = process.env[messageMap[ci.service]];
-
-	if (!ci.isCi) {
-		ci.branch = null;
-		ci.commit = null;
-	}
-
-	return ci;
-}
 
 const commands = {
 	async build(program, cmd) {
@@ -72,6 +32,7 @@ const commands = {
 		}
 
 		const client = new VisWiz(apiKey);
+		let progress;
 
 		log('Creating build on VisWiz.io...');
 
@@ -82,7 +43,14 @@ const commands = {
 				projectID: project,
 				revision: cmd.revision || ci.commit,
 			},
-			cmd.imageDir
+			cmd.imageDir,
+			(current, total) => {
+				if (!progress) {
+					progress = new Progress(total, current);
+				} else {
+					progress.tick();
+				}
+			}
 		);
 
 		const url = `https://app.viswiz.io/projects/${project}/build/${buildID}/results`;
@@ -129,10 +97,7 @@ function run(argv) {
 			'The revision for the build. Auto-detected on popular CIs.'
 		)
 		.action(cmd =>
-			commands.build(program, cmd).catch(err => {
-				console.error('Error:', err.message);
-				process.exit(1);
-			})
+			commands.build(program, cmd).catch(err => error(`Error: ${err.message}`))
 		);
 
 	program.parse(argv);

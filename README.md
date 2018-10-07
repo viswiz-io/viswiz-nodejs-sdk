@@ -9,7 +9,7 @@
 Welcome to the [VisWiz.io](https://www.viswiz.io/) Node.js SDK & CLI documentation.
 
 The SDK & CLI allows you to query and create new projects, builds or images within the
-VisWiz service.
+VisWiz.io service.
 
 ## Documentation
 
