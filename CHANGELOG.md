@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.4.0...v1.5.0) (2018-10-07)
+
+
+### Bug Fixes
+
+* Catch and output errors in CLI commands ([8de7c23](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/8de7c23))
+* ES version uses real ES sources ([7864576](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/7864576))
+* Upgrade dependencies :arrow_up: ([c4b957d](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/c4b957d))
+
+
+### Features
+
+* Progress indicator for build CLI command :tada: ([7868350](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/7868350)), closes [#1](https://github.com/viswiz-io/viswiz-nodejs-sdk/issues/1)
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.3.3...v1.4.0) (2018-10-06)
 
