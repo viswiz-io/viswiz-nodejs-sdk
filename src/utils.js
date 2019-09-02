@@ -3,10 +3,6 @@
 import envCI from 'env-ci';
 
 export function error(msg, cmd) {
-	if (process.env.NODE_ENV === 'test') {
-		return msg;
-	}
-
 	console.error(msg);
 	if (cmd) {
 		cmd.outputHelp();

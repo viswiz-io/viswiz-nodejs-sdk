@@ -48,7 +48,7 @@
     "test": "yarn test:jest"
   },
   "dependencies": {
-    "commander": "2.18.0",
+    "commander": "3.0.1",
     "env-ci": "3.1.0",
     "form-data": "^2.3.2",
     "glob": "7.1.3",

@@ -7,7 +7,7 @@ import { error, getCI, log } from './utils';
 import pkg from '../package.json';
 
 const commands = {
-	async build(program, cmd) {
+	async build(program, options) {
 		const ci = getCI();
 
 		const { apiKey, project } = program;
@@ -18,17 +18,17 @@ const commands = {
 		if (!project) {
 			return error('Error: Missing project ID!', program);
 		}
-		if (!cmd.imageDir) {
-			return error('Error: Missing image directory!', cmd);
+		if (!options.imageDir) {
+			return error('Error: Missing image directory!', options);
 		}
-		if (!cmd.branch && !ci.branch) {
-			return error('Error: Missing branch name!', cmd);
+		if (!options.branch && !ci.branch) {
+			return error('Error: Missing branch name!', options);
 		}
-		if (!cmd.message && !ci.message) {
-			return error('Error: Missing commit message!', cmd);
+		if (!options.message && !ci.message) {
+			return error('Error: Missing commit message!', options);
 		}
-		if (!cmd.revision && !ci.commit) {
-			return error('Error: Missing commit revision!', cmd);
+		if (!options.revision && !ci.commit) {
+			return error('Error: Missing commit revision!', options);
 		}
 
 		const client = new VisWiz(apiKey);
@@ -38,12 +38,12 @@ const commands = {
 
 		const buildID = await client.buildWithImages(
 			{
-				branch: cmd.branch || ci.prBranch || ci.branch,
-				name: cmd.message || ci.message,
+				branch: options.branch || ci.prBranch || ci.branch,
+				name: options.message || ci.message,
 				projectID: project,
-				revision: cmd.revision || ci.commit,
+				revision: options.revision || ci.commit,
 			},
-			cmd.imageDir,
+			options.imageDir,
 			(current, total) => {
 				if (!progress) {
 					progress = new Progress(total, current);
@@ -75,7 +75,9 @@ function run(argv) {
 			'-p, --project [projectID]',
 			'The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.',
 			process.env.VISWIZ_PROJECT_ID
-		)
+		);
+
+	program
 		.command('build')
 		.description(
 			'Creates a new build on VisWiz.io and sends images for regression testing.'
@@ -96,8 +98,11 @@ function run(argv) {
 			'-r, --revision [rev]',
 			'The revision for the build. Auto-detected on popular CIs.'
 		)
-		.action(cmd =>
-			commands.build(program, cmd).catch(err => error(`Error: ${err.message}`))
+		.action((cmd, options) =>
+			commands.build(program, options || cmd).catch(err => {
+				console.error(err);
+				error(`Error: ${err.message}`);
+			})
 		);
 
 	program.parse(argv);

@@ -1,5 +1,6 @@
 jest.mock('../src/Progress');
 
+import { spawnSync } from 'child_process';
 import path from 'path';
 import { commands } from '../src/cli';
 import nock from '../utils/nock';
@@ -66,6 +67,12 @@ describe('cli', () => {
 		};
 
 		delete process.env.CI;
+		process.env.TRAVIS = true;
+		process.env.TRAVIS_BRANCH = buildPayload.branch;
+		process.env.TRAVIS_COMMIT = buildPayload.revision;
+		process.env.TRAVIS_COMMIT_MESSAGE = buildPayload.name;
+		process.env.VISWIZ_API_KEY = API_KEY;
+		process.env.VISWIZ_PROJECT_ID = projectID;
 		process.env.VISWIZ_SERVER = nock.SERVER;
 	});
 
@@ -102,54 +109,73 @@ describe('cli', () => {
 		});
 
 		it('errors on missing API key', async () => {
-			delete program.apiKey;
+			delete process.env.VISWIZ_API_KEY;
 
-			const result = await build(program, cmd);
+			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
+				env: process.env,
+			});
 
-			expect(result).toContain('Missing API key');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain('Error: Missing API key');
 		});
 
 		it('errors on missing project ID', async () => {
-			delete program.project;
+			delete process.env.VISWIZ_PROJECT_ID;
 
-			const result = await build(program, cmd);
+			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
+				env: process.env,
+			});
 
-			expect(result).toContain('Missing project ID');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain('Error: Missing project ID');
 		});
 
 		it('errors on missing branch name', async () => {
 			delete process.env.TRAVIS_BRANCH;
-			delete cmd.branch;
 
-			const result = await build(program, cmd);
+			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
+				env: process.env,
+			});
 
-			expect(result).toContain('Missing branch name');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain('Error: Missing branch name');
 		});
 
 		it('errors on missing image directory', async () => {
-			delete cmd.imageDir;
+			const result = spawnSync('./bin/viswiz', ['build'], {
+				env: process.env,
+			});
 
-			const result = await build(program, cmd);
-
-			expect(result).toContain('Missing image directory');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain(
+				'Error: Missing image directory'
+			);
 		});
 
 		it('errors on missing commit message', async () => {
 			delete process.env.TRAVIS_COMMIT_MESSAGE;
-			delete cmd.message;
 
-			const result = await build(program, cmd);
+			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
+				env: process.env,
+			});
 
-			expect(result).toContain('Missing commit message');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain(
+				'Error: Missing commit message'
+			);
 		});
 
 		it('errors on missing commit revision', async () => {
 			delete process.env.TRAVIS_COMMIT;
-			delete cmd.revision;
 
-			const result = await build(program, cmd);
+			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
+				env: process.env,
+			});
 
-			expect(result).toContain('Missing commit revision');
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain(
+				'Error: Missing commit revision'
+			);
 		});
 
 		it('errors when no files are available', () => {
