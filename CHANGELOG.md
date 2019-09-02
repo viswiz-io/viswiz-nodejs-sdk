@@ -1,6 +1,14 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.5.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.5.0...v1.5.1) (2019-09-02)
+
+
+### Bug Fixes
+
+* Upgrade dependencies :arrow_up: ([54f0674](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/54f0674))
+* Use all CLI options :bug: ([1d2a9ad](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/1d2a9ad))
 
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.4.0...v1.5.0) (2018-10-07)
