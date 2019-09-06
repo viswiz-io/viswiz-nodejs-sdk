@@ -79,9 +79,7 @@ class VisWiz {
 				Accept: 'application/json',
 				Authorization: 'Bearer ' + this.apiKey,
 				'Content-Type': 'application/json',
-				'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${
-					pkg.repository.url
-				})`,
+				'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${pkg.repository.url})`,
 			},
 			additionalHeaders || {}
 		);
@@ -409,35 +407,33 @@ class VisWiz {
 	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
 	 * }, '/path/to/folder/with/images');
 	 */
-	buildFolder(build, folderPath, progressCallback) {
-		let buildID;
-
+	async buildFolder(build, folderPath, progressCallback) {
 		const imageFiles = glob.sync(path.join(folderPath, '**/*.png'));
-		if (!imageFiles.length) {
+		const total = imageFiles.length;
+		if (!total) {
 			return Promise.reject(
 				new Error('No image files found in image directory!')
 			);
 		}
-		const total = imageFiles.length;
 
-		return this.createBuild(build)
-			.then(build => {
-				buildID = build.id;
+		const buildResponse = await this.createBuild(build);
+		const buildID = buildResponse.id;
 
-				return imageFiles.reduce((chain, imageFile, index) => {
-					const name = imageFile
-						.replace(folderPath, '')
-						.replace(/^[/\\]/, '')
-						.replace(/\.png$/i, '')
-						.replace(/[/\\]/g, '__');
+		await imageFiles.reduce((chain, imageFile, index) => {
+			const name = imageFile
+				.replace(folderPath, '')
+				.replace(/^[/\\]/, '')
+				.replace(/\.png$/i, '')
+				.replace(/[/\\]/g, '__');
 
-					return chain
-						.then(() => this.createImage(buildID, name, imageFile))
-						.then(() => progressCallback && progressCallback(index + 1, total));
-				}, Promise.resolve());
-			})
-			.then(() => this.finishBuild(buildID))
-			.then(() => buildID);
+			return chain
+				.then(() => this.createImage(buildID, name, imageFile))
+				.then(() => progressCallback && progressCallback(index + 1, total));
+		}, Promise.resolve());
+
+		await this.finishBuild(buildID);
+
+		return buildID;
 	}
 
 	/**

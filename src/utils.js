@@ -34,6 +34,9 @@ export function getCI() {
 
 export function log(msg) {
 	if (process.env.NODE_ENV === 'test') {
+		global.LOGS = global.LOGS || [];
+		global.LOGS.push(msg);
+
 		return msg;
 	}
 	console.log(msg);

@@ -74,6 +74,10 @@ describe('cli', () => {
 		process.env.VISWIZ_API_KEY = API_KEY;
 		process.env.VISWIZ_PROJECT_ID = projectID;
 		process.env.VISWIZ_SERVER = nock.SERVER;
+
+		if (global.LOGS) {
+			global.LOGS = [];
+		}
 	});
 
 	describe('build', () => {
@@ -82,6 +86,11 @@ describe('cli', () => {
 
 			const result = await build(program, cmd);
 
+			expect(global.LOGS).toEqual([
+				'Creating build on VisWiz.io...',
+				'Done!',
+				'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
+			]);
 			expect(result).toContain('OK');
 			expect(instances[instances.length - 1].current).toBe(3);
 			expect(instances[instances.length - 1].total).toBe(3);
@@ -102,6 +111,11 @@ describe('cli', () => {
 
 			const result = await build(program, cmd);
 
+			expect(global.LOGS).toEqual([
+				'Creating build on VisWiz.io...',
+				'Done!',
+				'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
+			]);
 			expect(result).toContain('OK');
 			expect(instances[instances.length - 1].current).toBe(3);
 			expect(instances[instances.length - 1].total).toBe(3);
@@ -179,10 +193,17 @@ describe('cli', () => {
 		});
 
 		it('errors when no files are available', () => {
-			cmd.imageDir = __dirname;
+			const result = spawnSync(
+				'./bin/viswiz',
+				['build', '--image-dir', __dirname],
+				{
+					env: process.env,
+				}
+			);
 
-			return expect(build(program, cmd)).rejects.toThrow(
-				'No image files found in image directory!'
+			expect(result.status).toBe(1);
+			expect(result.stderr.toString()).toContain(
+				'Error: No image files found in image directory!'
 			);
 		});
 	});

@@ -36,7 +36,7 @@ const commands = {
 
 		log('Creating build on VisWiz.io...');
 
-		const buildID = await client.buildWithImages(
+		const buildID = await client.buildFolder(
 			{
 				branch: options.branch || ci.prBranch || ci.branch,
 				name: options.message || ci.message,
