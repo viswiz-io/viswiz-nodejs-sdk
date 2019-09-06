@@ -2,12 +2,27 @@
 
 import envCI from 'env-ci';
 
+const TEST = process.env.NODE_ENV === 'test';
+
 export function error(msg, cmd) {
-	console.error(msg);
+	log(msg, 'error');
 	if (cmd) {
 		cmd.outputHelp();
 	}
-	process.exit(1);
+	if (!TEST) {
+		process.exit(1);
+	}
+}
+
+function padNumber(value, length = 2) {
+	if (TEST && value < 1) {
+		value = value * 100;
+	}
+	return value.toString().padStart(length, '0');
+}
+
+export function formatTime(time) {
+	return `${padNumber(Math.floor(time / 60))}:${padNumber(time % 60)}`;
 }
 
 export function getCI() {
@@ -32,12 +47,13 @@ export function getCI() {
 	return ci;
 }
 
-export function log(msg) {
-	if (process.env.NODE_ENV === 'test') {
+export function log(msg, type = 'log') {
+	if (TEST) {
 		global.LOGS = global.LOGS || [];
 		global.LOGS.push(msg);
 
 		return msg;
 	}
-	console.log(msg);
+
+	console[type](msg);
 }

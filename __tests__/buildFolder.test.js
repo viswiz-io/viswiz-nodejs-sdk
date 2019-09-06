@@ -31,12 +31,10 @@ describe('buildFolder', () => {
 		name: 'Foo Bar',
 		revision: 'abcdef1234567890',
 	};
-	const build = Object.assign(
-		{
-			projectID,
-		},
-		buildPayload
-	);
+	const build = {
+		...buildPayload,
+		projectID,
+	};
 	const image = {
 		name: 'Foo Bar',
 		originalURL: 'http://foo.com/bar.png',
@@ -49,7 +47,10 @@ describe('buildFolder', () => {
 				const scope = nock()
 					.post(`/projects/${projectID}/builds`, buildPayload)
 					.matchHeader('Authorization', 'Bearer foobar')
-					.reply(200, Object.assign({ id: buildID }, build))
+					.reply(200, {
+						id: buildID,
+						...build,
+					})
 					.post(`/builds/${buildID}/images`, reqBody =>
 						validateRequestBody(
 							reqBody,

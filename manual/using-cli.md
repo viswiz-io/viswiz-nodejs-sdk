@@ -28,40 +28,34 @@ are also used for the `branch`, `message` and `revision` flags.
 
 ```
 $ viswiz --help
+Usage: viswiz [options] [command]
 
-  Usage: viswiz [options] [command]
+Options:
+  -V, --version              output the version number
+  -k, --api-key [apiKey]     The API key of a VisWiz account to use. Defaults to VISWIZ_API_KEY env.
+  -p, --project [projectID]  The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.
+  -h, --help                 output usage information
 
+Commands:
+  build [options]            Creates a new build on VisWiz.io and sends images for regression testing.
 
-  Options:
-
-    -V, --version              output the version number
-    -k, --api-key [apiKey]     The API key of a VisWiz account to use. Defaults to VISWIZ_API_KEY env.
-    -p, --project [projectID]  The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.
-    -h, --help                 output usage information
-
-
-  Commands:
-
-    build [options]  Creates a new build on VisWiz.io and sends images for regression testing.
 ```
 
 ### `build` options
 
 ```
 $ viswiz build --help
+Usage: viswiz build [options]
 
-  Usage: build [options]
+Creates a new build on VisWiz.io and sends images for regression testing.
 
-  Creates a new build on VisWiz.io and sends images for regression testing.
-
-
-  Options:
-
-    -i, --image-dir <path>          The path to a directory (scanned recursively) with images used for the build.
-    -b, --branch [branch name]      The branch name for the build. Auto-detected on popular CIs.
-    -m, --message [commit message]  The commit message for the build. Auto-detected on popular CIs.
-    -r, --revision [rev]            The revision for the build. Auto-detected on popular CIs.
-    -h, --help                      output usage information
+Options:
+  -i, --image-dir <path>           The path to a directory (scanned recursively) with images used for the build.
+  -b, --branch [branch name]       The branch name for the build. Auto-detected on popular CIs.
+  -m, --message [commit message]   The commit message for the build. Auto-detected on popular CIs.
+  -r, --revision [rev]             The revision for the build. Auto-detected on popular CIs.
+  -w, --wait-for-result [timeout]  Whether to wait for the result of the build comparison (disabled by default). Waits for a maximum number of seconds (defaults to 600).
+  -h, --help                       output usage information
 ```
 
 ## Usage

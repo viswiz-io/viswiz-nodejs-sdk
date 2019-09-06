@@ -5,6 +5,12 @@ module.exports = {
 	index: './README.md',
 	plugins: [
 		{
+			name: 'esdoc-ecmascript-proposal-plugin',
+			option: {
+				objectRestSpread: true,
+			},
+		},
+		{
 			name: 'esdoc-standard-plugin',
 			option: {
 				accessor: { access: ['public'] },

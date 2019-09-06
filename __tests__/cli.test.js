@@ -2,28 +2,28 @@ jest.mock('../src/Progress');
 
 import { spawnSync } from 'child_process';
 import path from 'path';
-import { commands } from '../src/cli';
+import { DEFAULTS, commands } from '../src/cli';
 import nock from '../utils/nock';
 import { instances } from '../src/Progress';
 
 const FIXTURES = path.resolve(__dirname, '..', '__fixtures__');
 
+DEFAULTS.POLL_SECONDS = 0.1;
+
 describe('cli', () => {
 	const API_KEY = 'foobar';
-	const buildID = 'abcdef';
-	const projectID = 'qwerty';
+	const BUILD_ID = 'abcdef';
+	const PROJECT_ID = 'qwerty';
 
 	const buildPayload = {
 		branch: 'master',
 		name: 'Foo Bar',
 		revision: 'abcdef1234567890',
 	};
-	const buildResponse = Object.assign(
-		{
-			projectID,
-		},
-		buildPayload
-	);
+	const buildResponse = {
+		...buildPayload,
+		projectID: PROJECT_ID,
+	};
 	const image = {
 		name: 'Foo Bar',
 		originalURL: 'http://foo.com/bar.png',
@@ -37,19 +37,22 @@ describe('cli', () => {
 
 	function nockSetup() {
 		return nock()
-			.post(`/projects/${projectID}/builds`, buildPayload)
+			.post(`/projects/${PROJECT_ID}/builds`, buildPayload)
 			.matchHeader('Authorization', `Bearer ${API_KEY}`)
-			.reply(200, Object.assign({ id: buildID }, buildResponse))
-			.post(`/builds/${buildID}/images`)
-			.matchHeader('Authorization', `Bearer ${API_KEY}`)
-			.reply(200, image)
-			.post(`/builds/${buildID}/images`)
-			.matchHeader('Authorization', `Bearer ${API_KEY}`)
-			.reply(200, image)
-			.post(`/builds/${buildID}/images`)
+			.reply(200, {
+				...buildResponse,
+				id: BUILD_ID,
+			})
+			.post(`/builds/${BUILD_ID}/images`)
 			.matchHeader('Authorization', `Bearer ${API_KEY}`)
 			.reply(200, image)
-			.post(`/builds/${buildID}/finish`)
+			.post(`/builds/${BUILD_ID}/images`)
+			.matchHeader('Authorization', `Bearer ${API_KEY}`)
+			.reply(200, image)
+			.post(`/builds/${BUILD_ID}/images`)
+			.matchHeader('Authorization', `Bearer ${API_KEY}`)
+			.reply(200, image)
+			.post(`/builds/${BUILD_ID}/finish`)
 			.matchHeader('Authorization', `Bearer ${API_KEY}`)
 			.reply(200);
 	}
@@ -57,7 +60,7 @@ describe('cli', () => {
 	beforeEach(() => {
 		program = {
 			apiKey: API_KEY,
-			project: projectID,
+			project: PROJECT_ID,
 		};
 		cmd = {
 			branch: buildPayload.branch,
@@ -72,7 +75,7 @@ describe('cli', () => {
 		process.env.TRAVIS_COMMIT = buildPayload.revision;
 		process.env.TRAVIS_COMMIT_MESSAGE = buildPayload.name;
 		process.env.VISWIZ_API_KEY = API_KEY;
-		process.env.VISWIZ_PROJECT_ID = projectID;
+		process.env.VISWIZ_PROJECT_ID = PROJECT_ID;
 		process.env.VISWIZ_SERVER = nock.SERVER;
 
 		if (global.LOGS) {
@@ -88,7 +91,7 @@ describe('cli', () => {
 
 			expect(global.LOGS).toEqual([
 				'Creating build on VisWiz.io...',
-				'Done!',
+				'Build created successfully!',
 				'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
 			]);
 			expect(result).toContain('OK');
@@ -113,7 +116,7 @@ describe('cli', () => {
 
 			expect(global.LOGS).toEqual([
 				'Creating build on VisWiz.io...',
-				'Done!',
+				'Build created successfully!',
 				'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
 			]);
 			expect(result).toContain('OK');
@@ -122,89 +125,220 @@ describe('cli', () => {
 			expect(scope.isDone()).toBeTruthy();
 		});
 
-		it('errors on missing API key', async () => {
-			delete process.env.VISWIZ_API_KEY;
+		describe('wait for results', () => {
+			it('passed', async () => {
+				const scope = nockSetup()
+					.get(`/projects/${PROJECT_ID}/builds`)
+					.matchHeader('Authorization', `Bearer ${API_KEY}`)
+					.reply(200, {
+						builds: [
+							{
+								id: 'anotherbuild',
+								...buildResponse,
+							},
+							{
+								id: BUILD_ID,
+								...buildResponse,
+							},
+						],
+					})
+					.get(`/projects/${PROJECT_ID}/builds`)
+					.matchHeader('Authorization', `Bearer ${API_KEY}`)
+					.reply(200, {
+						builds: [
+							{
+								id: 'anotherbuild',
+								...buildResponse,
+							},
+							{
+								id: BUILD_ID,
+								diffedAt: new Date().toISOString(),
+								diffPercentage: 0,
+								...buildResponse,
+							},
+						],
+					});
 
-			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
-				env: process.env,
+				cmd.waitForResult = true;
+
+				const result = await build(program, cmd);
+
+				expect(global.LOGS).toEqual([
+					'Creating build on VisWiz.io...',
+					'Build created successfully!',
+					'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
+					'',
+					'Waiting for results to be ready... (00:00/10:00)',
+					'Waiting for results to be ready... (00:10/10:00)',
+					'',
+					'Build passed!',
+				]);
+				expect(result).toContain('OK');
+				expect(scope.isDone()).toBeTruthy();
 			});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain('Error: Missing API key');
-		});
+			it('build fails', async () => {
+				const scope = nockSetup()
+					.get(`/projects/${PROJECT_ID}/builds`)
+					.matchHeader('Authorization', `Bearer ${API_KEY}`)
+					.reply(200, {
+						builds: [
+							{
+								id: BUILD_ID,
+								diffedAt: new Date().toISOString(),
+								diffPercentage: 1,
+								...buildResponse,
+							},
+						],
+					});
 
-		it('errors on missing project ID', async () => {
-			delete process.env.VISWIZ_PROJECT_ID;
+				cmd.waitForResult = true;
 
-			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
-				env: process.env,
+				const result = await build(program, cmd);
+
+				expect(global.LOGS).toEqual([
+					'Creating build on VisWiz.io...',
+					'Build created successfully!',
+					'Build report will be available at: https://app.viswiz.io/projects/qwerty/build/abcdef/results',
+					'',
+					'Waiting for results to be ready... (00:00/10:00)',
+					'',
+					'Build failed!',
+				]);
+				expect(result).toContain('OK');
+				expect(scope.isDone()).toBeTruthy();
 			});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain('Error: Missing project ID');
+			it('timeout', () => {
+				nockSetup()
+					.get(`/projects/${PROJECT_ID}/builds`)
+					.matchHeader('Authorization', `Bearer ${API_KEY}`)
+					.times(10)
+					.reply(200, {
+						builds: [
+							{
+								id: BUILD_ID,
+								...buildResponse,
+							},
+						],
+					});
+
+				cmd.waitForResult = '2';
+
+				return expect(build(program, cmd)).rejects.toThrow(
+					'Waiting for results timed out'
+				);
+			});
 		});
 
-		it('errors on missing branch name', async () => {
-			delete process.env.TRAVIS_BRANCH;
+		describe('errors', () => {
+			it('missing API key', async () => {
+				delete process.env.NODE_ENV;
+				delete process.env.VISWIZ_API_KEY;
 
-			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
-				env: process.env,
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', '.'],
+					{
+						env: process.env,
+					}
+				);
+
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain('Error: Missing API key');
 			});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain('Error: Missing branch name');
-		});
+			it('missing project ID', async () => {
+				delete process.env.VISWIZ_PROJECT_ID;
 
-		it('errors on missing image directory', async () => {
-			const result = spawnSync('./bin/viswiz', ['build'], {
-				env: process.env,
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', '.'],
+					{
+						env: process.env,
+					}
+				);
+
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain('Error: Missing project ID');
 			});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain(
-				'Error: Missing image directory'
-			);
-		});
+			it('missing branch name', async () => {
+				delete process.env.TRAVIS_BRANCH;
 
-		it('errors on missing commit message', async () => {
-			delete process.env.TRAVIS_COMMIT_MESSAGE;
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', '.'],
+					{
+						env: process.env,
+					}
+				);
 
-			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
-				env: process.env,
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain(
+					'Error: Missing branch name'
+				);
 			});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain(
-				'Error: Missing commit message'
-			);
-		});
-
-		it('errors on missing commit revision', async () => {
-			delete process.env.TRAVIS_COMMIT;
-
-			const result = spawnSync('./bin/viswiz', ['build', '--image-dir', '.'], {
-				env: process.env,
-			});
-
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain(
-				'Error: Missing commit revision'
-			);
-		});
-
-		it('errors when no files are available', () => {
-			const result = spawnSync(
-				'./bin/viswiz',
-				['build', '--image-dir', __dirname],
-				{
+			it('missing image directory', async () => {
+				const result = spawnSync('./bin/viswiz', ['build'], {
 					env: process.env,
-				}
-			);
+				});
 
-			expect(result.status).toBe(1);
-			expect(result.stderr.toString()).toContain(
-				'Error: No image files found in image directory!'
-			);
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain(
+					'Error: Missing image directory'
+				);
+			});
+
+			it('missing commit message', async () => {
+				delete process.env.TRAVIS_COMMIT_MESSAGE;
+
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', '.'],
+					{
+						env: process.env,
+					}
+				);
+
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain(
+					'Error: Missing commit message'
+				);
+			});
+
+			it('missing commit revision', async () => {
+				delete process.env.TRAVIS_COMMIT;
+
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', '.'],
+					{
+						env: process.env,
+					}
+				);
+
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain(
+					'Error: Missing commit revision'
+				);
+			});
+
+			it('when no files are available', () => {
+				const result = spawnSync(
+					'./bin/viswiz',
+					['build', '--image-dir', __dirname],
+					{
+						env: process.env,
+					}
+				);
+
+				expect(result.status).toBe(1);
+				expect(result.stderr.toString()).toContain(
+					'Error: No image files found in image directory!'
+				);
+			});
 		});
 	});
 });

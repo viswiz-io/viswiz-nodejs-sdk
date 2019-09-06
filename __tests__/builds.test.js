@@ -64,7 +64,10 @@ describe('builds methods', () => {
 				name: 'Foo Bar',
 				url: 'http://github.com/foo/bar',
 			};
-			const params = Object.assign({ projectID }, payload);
+			const params = {
+				...payload,
+				projectID,
+			};
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)
@@ -83,7 +86,10 @@ describe('builds methods', () => {
 				name: 'Foo Bar',
 				url: 'http://github.com/foo/bar',
 			};
-			const params = Object.assign({ projectID }, payload);
+			const params = {
+				...payload,
+				projectID,
+			};
 
 			const scope = nock()
 				.post(`/projects/${projectID}/builds`, payload)

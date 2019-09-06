@@ -73,16 +73,14 @@ class VisWiz {
 	 * @private
 	 * @param {object} [additionalHeaders={}] - headers object
 	 */
-	_getHeaders(additionalHeaders) {
-		return Object.assign(
-			{
-				Accept: 'application/json',
-				Authorization: 'Bearer ' + this.apiKey,
-				'Content-Type': 'application/json',
-				'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${pkg.repository.url})`,
-			},
-			additionalHeaders || {}
-		);
+	_getHeaders(additionalHeaders = {}) {
+		return {
+			Accept: 'application/json',
+			Authorization: 'Bearer ' + this.apiKey,
+			'Content-Type': 'application/json',
+			'User-Agent': `viswiz-nodejs-sdk/${pkg.version} (${pkg.repository.url})`,
+			...additionalHeaders,
+		};
 	}
 
 	/**
@@ -277,8 +275,7 @@ class VisWiz {
 
 		const path = `/projects/${build.projectID}/builds`;
 
-		const body = Object.assign({}, build);
-		delete body.projectID;
+		const { projectID, ...body } = build;
 
 		return this._request('POST', path, body, this._getHeaders());
 	}

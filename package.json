@@ -33,7 +33,7 @@
     "index.js"
   ],
   "scripts": {
-    "build": "babel src/ --out-dir dist/ --ignore __mocks__",
+    "build": "babel src/ --out-dir dist/ --ignore \"**/__mocks__/*\"",
     "docs": "esdoc",
     "lint": "eslint . --cache --fix --ignore-pattern '!.eslintrc.js'",
     "pretty": "prettier --write --list-different \"**/*.js\"",
@@ -46,6 +46,7 @@
     "test": "yarn test:jest"
   },
   "dependencies": {
+    "babel-jest": "24.9.0",
     "commander": "3.0.1",
     "env-ci": "4.1.1",
     "form-data": "2.5.1",
@@ -54,21 +55,26 @@
     "progress": "2.0.3"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.3",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
+    "@babel/cli": "7.6.0",
+    "@babel/core": "7.6.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.5.5",
+    "@babel/plugin-transform-modules-commonjs": "7.6.0",
     "esdoc": "1.1.0",
     "esdoc-brand-plugin": "1.0.1",
+    "esdoc-ecmascript-proposal-plugin": "1.0.0",
     "esdoc-importpath-plugin": "1.0.2",
     "esdoc-standard-plugin": "1.0.0",
     "eslint": "6.3.0",
     "husky": "3.0.5",
-    "jest": "23.6.0",
-    "lint-staged": "9.2.0",
-    "nock": "10.0.6",
+    "jest": "24.9.0",
+    "lint-staged": "9.2.5",
+    "nock": "11.3.3",
     "prettier": "1.18.2",
     "standard-version": "7.0.0",
     "validate-commit-msg": "2.14.0"
+  },
+  "resolutions": {
+    "graceful-fs": "4.2.2"
   },
   "husky": {
     "hooks": {

@@ -3,19 +3,69 @@
 import program from 'commander';
 import VisWiz from './sdk';
 import Progress from './Progress';
-import { error, getCI, log } from './utils';
+import { error, formatTime, getCI, log } from './utils';
 import pkg from '../package.json';
+
+const DEFAULTS = {
+	POLL_SECONDS: 5,
+	WAIT_SECONDS: 600,
+};
+
+function waitForResult(client, projectID, buildID, maxTime) {
+	let timeoutTimer;
+
+	return Promise.race([
+		new Promise((resolve, reject) => {
+			timeoutTimer = setTimeout(
+				() => reject(new Error('Waiting for results timed out!')),
+				maxTime * 1000
+			);
+		}),
+		new Promise(resolve => {
+			let time = 0;
+
+			function poll() {
+				log(
+					`Waiting for results to be ready... (${formatTime(time)}/${formatTime(
+						maxTime
+					)})`
+				);
+
+				client
+					.getBuilds(projectID)
+					.then(builds => {
+						const build = builds.find(item => item.id === buildID);
+
+						if (!build || !build.diffedAt) {
+							return schedule();
+						}
+
+						clearTimeout(timeoutTimer);
+						resolve(build.diffPercentage === 0);
+					})
+					.catch(schedule);
+			}
+
+			function schedule() {
+				time += DEFAULTS.POLL_SECONDS;
+				setTimeout(poll, DEFAULTS.POLL_SECONDS * 1000);
+			}
+
+			poll();
+		}),
+	]);
+}
 
 const commands = {
 	async build(program, options) {
 		const ci = getCI();
 
-		const { apiKey, project } = program;
+		const { apiKey, project: projectID } = program;
 
 		if (!apiKey) {
 			return error('Error: Missing API key!', program);
 		}
-		if (!project) {
+		if (!projectID) {
 			return error('Error: Missing project ID!', program);
 		}
 		if (!options.imageDir) {
@@ -40,7 +90,7 @@ const commands = {
 			{
 				branch: options.branch || ci.prBranch || ci.branch,
 				name: options.message || ci.message,
-				projectID: project,
+				projectID,
 				revision: options.revision || ci.commit,
 			},
 			options.imageDir,
@@ -53,10 +103,29 @@ const commands = {
 			}
 		);
 
-		const url = `https://app.viswiz.io/projects/${project}/build/${buildID}/results`;
+		const url = `https://app.viswiz.io/projects/${projectID}/build/${buildID}/results`;
 
-		log('Done!');
+		log('Build created successfully!');
 		log(`Build report will be available at: ${url}`);
+
+		if (options.waitForResult) {
+			log('');
+			const passed = await waitForResult(
+				client,
+				projectID,
+				buildID,
+				typeof options.waitForResult === 'string'
+					? parseInt(options.waitForResult, 10)
+					: DEFAULTS.WAIT_SECONDS
+			);
+			log('');
+
+			if (!passed) {
+				error('Build failed!');
+			} else {
+				log('Build passed!');
+			}
+		}
 
 		return 'OK';
 	},
@@ -98,17 +167,25 @@ function run(argv) {
 			'-r, --revision [rev]',
 			'The revision for the build. Auto-detected on popular CIs.'
 		)
+		.option(
+			'-w, --wait-for-result [timeout]',
+			'Whether to wait for the result of the build comparison (disabled by default). Waits for a maximum number of seconds (defaults to 600).'
+		)
 		.action((cmd, options) =>
 			commands.build(program, options || cmd).catch(err => {
-				console.error(err);
 				error(`Error: ${err.message}`);
 			})
 		);
 
 	program.parse(argv);
+
+	if (!program.args.length) {
+		program.help();
+	}
 }
 
 module.exports = {
+	DEFAULTS,
 	commands,
 	run,
 };
