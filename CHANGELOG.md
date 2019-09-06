@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.5.1...v2.0.0) (2019-09-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Image names might be different compared to previous
+versions, which were not correctly removing the folder prefix.
+
+### Bug Fixes
+
+* Build operation removes folder prefix from image names :bug: ([fbebda8](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/fbebda8))
+* Progress bar displays correctly :bug: ([b01cb5a](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/b01cb5a))
+
+
+### Features
+
+* CLI build with wait for results flag ([b2434c8](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/b2434c8))
+
 ### [1.5.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v1.5.0...v1.5.1) (2019-09-02)
 
 
