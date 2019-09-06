@@ -408,7 +408,8 @@ class VisWiz {
 	 * }, '/path/to/folder/with/images');
 	 */
 	async buildFolder(build, folderPath, progressCallback) {
-		const imageFiles = glob.sync(path.join(folderPath, '**/*.png'));
+		const fullPath = path.resolve(folderPath);
+		const imageFiles = glob.sync(path.join(fullPath, '**/*.png'));
 		const total = imageFiles.length;
 		if (!total) {
 			return Promise.reject(
@@ -421,7 +422,7 @@ class VisWiz {
 
 		await imageFiles.reduce((chain, imageFile, index) => {
 			const name = imageFile
-				.replace(folderPath, '')
+				.replace(fullPath, '')
 				.replace(/^[/\\]/, '')
 				.replace(/\.png$/i, '')
 				.replace(/[/\\]/g, '__');

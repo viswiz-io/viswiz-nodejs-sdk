@@ -1,18 +1,17 @@
-import path from 'path';
 import VisWiz from '../es';
 import nock from '../utils/nock';
 
-const FIXTURES = path.resolve(__dirname, '..', '__fixtures__');
+const FIXTURES = './__fixtures__/';
 
 let instance;
 
-function validateRequestBody(body, imageName, fileName) {
+function validateRequestBody(body, fileName, imageName) {
 	const raw = Buffer.from(body, 'hex').toString();
 	return (
 		raw.includes('Content-Disposition: form-data; name="name"') &&
-		raw.includes(imageName) &&
+		raw.includes(fileName) &&
 		raw.includes(
-			`Content-Disposition: form-data; name="image"; filename="${fileName}"`
+			`Content-Disposition: form-data; name="image"; filename="${imageName}"`
 		)
 	);
 }
