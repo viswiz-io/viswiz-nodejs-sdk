@@ -110,18 +110,14 @@ class VisWiz {
 	 * @private
 	 * @param {object} [additionalHeaders={}] - headers object
 	 */
-	_getHeaders(additionalHeaders) {
-		return Object.assign(
-			{
-				Accept: &apos;application/json&apos;,
-				Authorization: &apos;Bearer &apos; + this.apiKey,
-				&apos;Content-Type&apos;: &apos;application/json&apos;,
-				&apos;User-Agent&apos;: `viswiz-nodejs-sdk/${pkg.version} (${
-					pkg.repository.url
-				})`,
-			},
-			additionalHeaders || {}
-		);
+	_getHeaders(additionalHeaders = {}) {
+		return {
+			Accept: &apos;application/json&apos;,
+			Authorization: &apos;Bearer &apos; + this.apiKey,
+			&apos;Content-Type&apos;: &apos;application/json&apos;,
+			&apos;User-Agent&apos;: `viswiz-nodejs-sdk/${pkg.version} (${pkg.repository.url})`,
+			...additionalHeaders,
+		};
 	}
 
 	/**
@@ -316,8 +312,7 @@ class VisWiz {
 
 		const path = `/projects/${build.projectID}/builds`;
 
-		const body = Object.assign({}, build);
-		delete body.projectID;
+		const { projectID, ...body } = build;
 
 		return this._request(&apos;POST&apos;, path, body, this._getHeaders());
 	}
@@ -446,35 +441,34 @@ class VisWiz {
 	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
 	 * }, &apos;/path/to/folder/with/images&apos;);
 	 */
-	buildFolder(build, folderPath, progressCallback) {
-		let buildID;
-
-		const imageFiles = glob.sync(path.join(folderPath, &apos;**/*.png&apos;));
-		if (!imageFiles.length) {
+	async buildFolder(build, folderPath, progressCallback) {
+		const fullPath = path.resolve(folderPath);
+		const imageFiles = glob.sync(path.join(fullPath, &apos;**/*.png&apos;));
+		const total = imageFiles.length;
+		if (!total) {
 			return Promise.reject(
 				new Error(&apos;No image files found in image directory!&apos;)
 			);
 		}
-		const total = imageFiles.length;
 
-		return this.createBuild(build)
-			.then(build =&gt; {
-				buildID = build.id;
+		const buildResponse = await this.createBuild(build);
+		const buildID = buildResponse.id;
 
-				return imageFiles.reduce((chain, imageFile, index) =&gt; {
-					const name = imageFile
-						.replace(folderPath, &apos;&apos;)
-						.replace(/^[/\\]/, &apos;&apos;)
-						.replace(/\.png$/i, &apos;&apos;)
-						.replace(/[/\\]/g, &apos;__&apos;);
+		await imageFiles.reduce((chain, imageFile, index) =&gt; {
+			const name = imageFile
+				.replace(fullPath, &apos;&apos;)
+				.replace(/^[/\\]/, &apos;&apos;)
+				.replace(/\.png$/i, &apos;&apos;)
+				.replace(/[/\\]/g, &apos;__&apos;);
 
-					return chain
-						.then(() =&gt; this.createImage(buildID, name, imageFile))
-						.then(() =&gt; progressCallback &amp;&amp; progressCallback(index + 1, total));
-				}, Promise.resolve());
-			})
-			.then(() =&gt; this.finishBuild(buildID))
-			.then(() =&gt; buildID);
+			return chain
+				.then(() =&gt; this.createImage(buildID, name, imageFile))
+				.then(() =&gt; progressCallback &amp;&amp; progressCallback(index + 1, total));
+		}, Promise.resolve());
+
+		await this.finishBuild(buildID);
+
+		return buildID;
 	}
 
 	/**
