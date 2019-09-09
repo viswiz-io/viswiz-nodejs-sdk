@@ -41,18 +41,9 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
-    <li data-ice="manualNav" class="indent-h1" data-link="manual/using-cli.html"><a href="manual/using-cli.html" data-ice="link">Using the CLI</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#installation" data-ice="link">Installation</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#configuration" data-ice="link">Configuration</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#options" data-ice="link">Options</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/using-cli.html"><a href="manual/using-cli.html#-code-build--code--options" data-ice="link">build options</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/using-cli.html"><a href="manual/using-cli.html#usage" data-ice="link">Usage</a></li>
-</ul>
-  </div>
-<div data-ice="manual">
-    <ul class="manual-toc">
-      
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#changelog" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v3-0-0---v4-0-0--4-0-0--a---2019-09-09-" data-ice="link">4.0.0 (2019-09-09)</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#&#x26A0;-breaking-changes" data-ice="link">&#x26A0; BREAKING CHANGES</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#-a-href--https---github-com-viswiz-io-viswiz-nodejs-sdk-compare-v2-1-0---v3-0-0--3-0-0--a---2019-09-09-" data-ice="link">3.0.0 (2019-09-09)</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#&#x26A0;-breaking-changes" data-ice="link">&#x26A0; BREAKING CHANGES</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#bug-fixes" data-ice="link">Bug Fixes</a></li>
@@ -148,43 +139,6 @@ client.getProjects()
 </code></pre><h3>ES module</h3><pre><code class="lang-js"><code class="source-code prettyprint">import VisWiz from &apos;viswiz-sdk/es&apos;;</code>
 </code></pre></div>
         <a data-ice="link" href="manual/usage.html"></a>
-      </div>
-    </div>
-<div class="manual-card-wrap" data-ice="cards">
-      <div class="manual-card">
-        <div data-ice="card"><h1>Using the CLI</h1><h2>Installation</h2><p>Install the module using <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">$ yarn add -D viswiz-sdk</code>
-</code></pre><p>Or using <code>npm</code>:</p><pre><code><code class="source-code prettyprint">$ npm install -D viswiz-sdk</code>
-</code></pre><h2>Configuration</h2><p>The following environment keys are used when their corresponding flags are missing:</p><ul>
-<li><code>VISWIZ_API_KEY</code> - for the <code>api-key</code> flag</li>
-<li><code>VISWIZ_PROJECT_ID</code> - for the <code>project</code> flag</li>
-</ul><p>CI environment variables for popular <a href="https://www.npmjs.com/package/env-ci#supported-ci">CI services</a>
-are also used for the <code>branch</code>, <code>message</code> and <code>revision</code> flags.</p><h2>Options</h2><pre><code><code class="source-code prettyprint">$ viswiz --help
-Usage: viswiz [options] [command]
-
-Options:
-  -V, --version              output the version number
-  -k, --api-key [apiKey]     The API key of a VisWiz account to use. Defaults to VISWIZ_API_KEY env.
-  -p, --project [projectID]  The ID of a VisWiz project to use. Defaults to VISWIZ_PROJECT_ID env.
-  -h, --help                 output usage information
-
-Commands:
-  build [options]            Creates a new build on VisWiz.io and sends images for regression testing.</code>
-</code></pre><h3><code>build</code> options</h3><pre><code><code class="source-code prettyprint">$ viswiz build --help
-Usage: viswiz build [options]
-
-Creates a new build on VisWiz.io and sends images for regression testing.
-
-Options:
-  -i, --image-dir &lt;path&gt;           The path to a directory (scanned recursively) with images used for the build.
-  -b, --branch [branch name]       The branch name for the build. Auto-detected on popular CIs.
-  -m, --message [commit message]   The commit message for the build. Auto-detected on popular CIs.
-  -r, --revision [rev]             The revision for the build. Auto-detected on popular CIs.
-  -w, --wait-for-result [timeout]  Whether to wait for the result of the build comparison (disabled by default). Waits for a maximum number of seconds (defaults to 600).
-  -h, --help                       output usage information</code>
-</code></pre><h2>Usage</h2><p>On popular <a href="https://www.npmjs.com/package/env-ci#supported-ci">CI services</a>, assuming
-<code>VISWIZ_API_KEY</code> and <code>VISWIZ_PROJECT_ID</code> values are configured in the CI environment:</p><pre><code><code class="source-code prettyprint">$ viswiz build --image-dir ./path/to/images/directory</code>
-</code></pre></div>
-        <a data-ice="link" href="manual/using-cli.html"></a>
       </div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
