@@ -472,7 +472,12 @@ class VisWiz {
 		const buildID = buildResponse.id;
 
 		await imageFiles.reduce((chain, imageFile, index) =&gt; {
-			const name = imageFile
+			let name = imageFile;
+			// glob under Windows returns `/` instead of `\`
+			if (process.platform === &apos;win32&apos;) {
+				name = name.replace(/\//g, &apos;\\&apos;);
+			}
+			name = name
 				.replace(fullPath, &apos;&apos;)
 				.replace(/^[/\\]/, &apos;&apos;)
 				.replace(/\.png$/i, &apos;&apos;)
