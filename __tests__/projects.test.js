@@ -17,11 +17,15 @@ describe('projects methods', () => {
 		name: 'Foo Bar',
 		url: 'http://github.com/foo/bar',
 	};
+	const project2 = {
+		...project,
+		id: 'mnopqr',
+	};
 
 	describe('getProjects', () => {
 		it('resolves on successfull request', () => {
 			const body = {
-				projects: [project, project],
+				projects: [project, project2],
 			};
 
 			const scope = nock()
@@ -42,6 +46,36 @@ describe('projects methods', () => {
 				.reply(401);
 
 			return instance.getProjects().catch(response => {
+				expect(response.statusCode).toBe(401);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		});
+	});
+
+	describe('getProject', () => {
+		it('resolves on successfull request', () => {
+			const body = {
+				projects: [project, project2],
+			};
+
+			const scope = nock()
+				.get('/projects')
+				.matchHeader('Authorization', 'Bearer foobar')
+				.reply(200, body);
+
+			return instance.getProject(project.id).then(response => {
+				expect(response).toEqual(project);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		});
+
+		it('rejects on error request', () => {
+			const scope = nock()
+				.get('/projects')
+				.matchHeader('Authorization', 'Bearer foobar')
+				.reply(401);
+
+			return instance.getProject(project.id).catch(response => {
 				expect(response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
