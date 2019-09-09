@@ -90,6 +90,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/sdk.js~viswiz#getproject",
+    "class/src/sdk.js~VisWiz.html#instance-method-getProject",
+    "src/sdk.js~VisWiz#getProject",
+    "method"
+  ],
+  [
     "src/sdk.js~viswiz#getprojectnotifications",
     "class/src/sdk.js~VisWiz.html#instance-method-getProjectNotifications",
     "src/sdk.js~VisWiz#getProjectNotifications",

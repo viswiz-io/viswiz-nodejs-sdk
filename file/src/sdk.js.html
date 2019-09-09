@@ -190,6 +190,23 @@ class VisWiz {
 	}
 
 	/**
+	 * Get a list of all the projects for the account.
+	 *
+	 * @method
+	 * @param {string} projectID - The requested project ID
+	 * @returns {Promise}
+	 * @fulfil {Object} - The requested project object
+	 *
+	 * @example
+	 * const project = await client.getProject(projectID);
+	 */
+	getProject(projectID) {
+		return this.getProjects().then(projects =&gt;
+			projects.find(item =&gt; item.id === projectID)
+		);
+	}
+
+	/**
 	 * Create a new project for the account.
 	 *
 	 * @method
@@ -429,7 +446,7 @@ class VisWiz {
 	 * @param {string} build.projectID - The requested project ID
 	 * @param {string} build.name - The commit name for this build
 	 * @param {string} build.revision - The revision for this build
-	 * @param {object} folderPath
+	 * @param {string} folderPath
 	 * @param {function} [progressCallback] - called with parameters: (current, total)
 	 * @returns {Promise}
 	 *
