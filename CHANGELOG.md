@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v2.0.1...v2.1.0) (2019-09-09)
+
+
+### Bug Fixes
+
+* CLI wait for result uses the project threshold for comparison ([169a2d5](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/169a2d5))
+
+
+### Features
+
+* New SDK method: getProject ([19d0709](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/19d0709))
+
 ### [2.0.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v2.0.0...v2.0.1) (2019-09-08)
 
 
