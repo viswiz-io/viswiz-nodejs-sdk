@@ -23,7 +23,6 @@ module.exports = {
 				manual: {
 					files: [
 						'./manual/usage.md',
-						'./manual/using-cli.md',
 						'./CHANGELOG.md',
 					],
 				},

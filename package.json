@@ -22,11 +22,7 @@
   "engines": {
     "node": ">=8.5.0"
   },
-  "bin": {
-    "viswiz": "./bin/viswiz"
-  },
   "files": [
-    "bin/",
     "dist/",
     "src/*.js",
     "es.js",
@@ -46,12 +42,9 @@
     "test": "yarn test:jest"
   },
   "dependencies": {
-    "commander": "3.0.1",
-    "env-ci": "4.1.1",
     "form-data": "2.5.1",
     "glob": "7.1.4",
-    "got": "9.6.0",
-    "progress": "2.0.3"
+    "got": "9.6.0"
   },
   "devDependencies": {
     "@babel/cli": "7.6.0",
