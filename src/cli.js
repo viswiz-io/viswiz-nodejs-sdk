@@ -11,8 +11,10 @@ const DEFAULTS = {
 	WAIT_SECONDS: 600,
 };
 
-function waitForResult(client, projectID, buildID, maxTime) {
+async function waitForResult(client, projectID, buildID, maxTime) {
 	let timeoutTimer;
+
+	const project = await client.getProject(projectID);
 
 	return Promise.race([
 		new Promise((resolve, reject) => {
@@ -41,7 +43,7 @@ function waitForResult(client, projectID, buildID, maxTime) {
 						}
 
 						clearTimeout(timeoutTimer);
-						resolve(build.diffPercentage === 0);
+						resolve(build.diffPercentage <= project.diffThreshold);
 					})
 					.catch(schedule);
 			}

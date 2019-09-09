@@ -126,8 +126,21 @@ describe('cli', () => {
 		});
 
 		describe('wait for results', () => {
-			it('passed', async () => {
-				const scope = nockSetup()
+			const nockSetupResults = () =>
+				nockSetup()
+					.get('/projects')
+					.matchHeader('Authorization', `Bearer ${API_KEY}`)
+					.reply(200, {
+						projects: [
+							{
+								id: PROJECT_ID,
+								diffThreshold: 0.5,
+							},
+						],
+					});
+
+			test('passes', async () => {
+				const scope = nockSetupResults()
 					.get(`/projects/${PROJECT_ID}/builds`)
 					.matchHeader('Authorization', `Bearer ${API_KEY}`)
 					.reply(200, {
@@ -153,7 +166,7 @@ describe('cli', () => {
 							{
 								id: BUILD_ID,
 								diffedAt: new Date().toISOString(),
-								diffPercentage: 0,
+								diffPercentage: 0.25,
 								...buildResponse,
 							},
 						],
@@ -177,8 +190,8 @@ describe('cli', () => {
 				expect(scope.isDone()).toBeTruthy();
 			});
 
-			it('build fails', async () => {
-				const scope = nockSetup()
+			test('build fails', async () => {
+				const scope = nockSetupResults()
 					.get(`/projects/${PROJECT_ID}/builds`)
 					.matchHeader('Authorization', `Bearer ${API_KEY}`)
 					.reply(200, {
@@ -186,7 +199,7 @@ describe('cli', () => {
 							{
 								id: BUILD_ID,
 								diffedAt: new Date().toISOString(),
-								diffPercentage: 1,
+								diffPercentage: 0.51,
 								...buildResponse,
 							},
 						],
@@ -209,8 +222,8 @@ describe('cli', () => {
 				expect(scope.isDone()).toBeTruthy();
 			});
 
-			it('timeout', () => {
-				nockSetup()
+			test('timeout', () => {
+				nockSetupResults()
 					.get(`/projects/${PROJECT_ID}/builds`)
 					.matchHeader('Authorization', `Bearer ${API_KEY}`)
 					.times(10)
