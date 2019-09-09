@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v3.0.0...v4.0.0) (2019-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* The CLI has been moved to its own package: https://github.com/viswiz-io/viswiz-cli
+
+* Remove CLI :truck: ([f46cca7](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/f46cca7))
+
 ## [3.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v2.1.0...v3.0.0) (2019-09-09)
 
 
