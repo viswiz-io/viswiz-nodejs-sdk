@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v2.1.0...v3.0.0) (2019-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* Image names are different compared to previous versions under Windows.
+
+### Bug Fixes
+
+* Paths under Windows get properly their prefix removed :bug: ([54f13b3](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/54f13b3))
+
 ## [2.1.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v2.0.1...v2.1.0) (2019-09-09)
 
 
