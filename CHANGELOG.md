@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v4.0.0...v5.0.0) (2020-02-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for node 8
+* Images in folders start using `/` as the folder
+separator. Previously this was replaced with `__`.
+
+### Features
+
+* Allow folder separators inside image names ([e008663](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/e0086635561c48e4eb8454473d92f749adb68c38))
+
+
+### Bug Fixes
+
+* Upgrade all dependencies ([ce4dcea](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/ce4dcea4517823753564fdf2296e41788eb69261))
+
 ## [4.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v3.0.0...v4.0.0) (2019-09-09)
 
 
