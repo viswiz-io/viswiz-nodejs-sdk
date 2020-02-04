@@ -41,8 +41,8 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getImages(buildID).catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getImages(buildID).catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -89,8 +89,8 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createImage(buildID, 'foo', filePath).catch(response => {
-				expect(response.statusCode).toBe(400);
+			return instance.createImage(buildID, 'foo', filePath).catch(err => {
+				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});

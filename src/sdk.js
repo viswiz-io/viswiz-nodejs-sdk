@@ -45,26 +45,20 @@ class VisWiz {
 	_request(method, path, body, headers) {
 		const url = this.server + path;
 		const options = {
-			body,
 			headers,
-			json: typeof body === 'object' && !(body instanceof FormData),
 			method,
+			retry: 0,
 		};
 
-		return got(url, options).then(response => {
-			const { body } = response;
-			let parsed = body;
-
-			if (!options.json) {
-				try {
-					parsed = JSON.parse(body);
-				} catch (err) {
-					// Nothing to do here
-				}
+		if (body) {
+			if (body instanceof FormData) {
+				options.body = body;
+			} else {
+				options.json = body;
 			}
+		}
 
-			return parsed;
-		});
+		return got(url, options).json();
 	}
 
 	/**

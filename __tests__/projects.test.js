@@ -45,8 +45,8 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProjects().catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getProjects().catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -75,8 +75,8 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProject(project.id).catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getProject(project.id).catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -109,8 +109,8 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createProject(payload).catch(response => {
-				expect(response.statusCode).toBe(400);
+			return instance.createProject(payload).catch(err => {
+				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -148,8 +148,8 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProjectNotifications(projectID).catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getProjectNotifications(projectID).catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -191,8 +191,8 @@ describe('projects methods', () => {
 
 			return instance
 				.updateProjectNotifications(projectID, notifications)
-				.catch(response => {
-					expect(response.statusCode).toBe(401);
+				.catch(err => {
+					expect(err.response.statusCode).toBe(401);
 					expect(scope.isDone()).toBeTruthy();
 				});
 		});

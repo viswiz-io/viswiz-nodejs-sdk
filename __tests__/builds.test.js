@@ -42,8 +42,8 @@ describe('builds methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getBuilds(projectID).catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getBuilds(projectID).catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -96,8 +96,8 @@ describe('builds methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createBuild(params).catch(response => {
-				expect(response.statusCode).toBe(400);
+			return instance.createBuild(params).catch(err => {
+				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -129,8 +129,8 @@ describe('builds methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.finishBuild(buildID).catch(response => {
-				expect(response.statusCode).toBe(400);
+			return instance.finishBuild(buildID).catch(err => {
+				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -167,8 +167,8 @@ describe('builds methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getBuildResults(buildID).catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getBuildResults(buildID).catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});

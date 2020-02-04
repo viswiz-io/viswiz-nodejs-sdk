@@ -34,8 +34,8 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getAccount().catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getAccount().catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -69,8 +69,8 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getWebhooks().catch(response => {
-				expect(response.statusCode).toBe(401);
+			return instance.getWebhooks().catch(err => {
+				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
@@ -104,8 +104,8 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createWebhook(payload).catch(response => {
-				expect(response.statusCode).toBe(400);
+			return instance.createWebhook(payload).catch(err => {
+				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});

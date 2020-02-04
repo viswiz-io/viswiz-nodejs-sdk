@@ -21,10 +21,7 @@ module.exports = {
 				},
 				coverage: { enable: false },
 				manual: {
-					files: [
-						'./manual/usage.md',
-						'./CHANGELOG.md',
-					],
+					files: ['./manual/usage.md', './CHANGELOG.md'],
 				},
 			},
 		},
