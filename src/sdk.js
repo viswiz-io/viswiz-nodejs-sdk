@@ -443,8 +443,7 @@ class VisWiz {
 			name = name
 				.replace(fullPath, '')
 				.replace(/^[/\\]/, '')
-				.replace(/\.png$/i, '')
-				.replace(/[/\\]/g, '__');
+				.replace(/\.png$/i, '');
 
 			return chain
 				.then(() => this.createImage(buildID, name, imageFile))

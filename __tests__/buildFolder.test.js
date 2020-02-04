@@ -72,7 +72,7 @@ describe('buildFolder', () => {
 					.post(`/builds/${buildID}/images`, reqBody =>
 						validateRequestBody(
 							reqBody,
-							'subfolder__viswiz-favicon-48',
+							'subfolder/viswiz-favicon-48',
 							'viswiz-favicon-48.png'
 						)
 					)
