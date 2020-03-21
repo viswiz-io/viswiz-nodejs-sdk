@@ -19,7 +19,7 @@ describe('images methods', () => {
 	};
 
 	describe('getImages', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				images: [image, image],
 			};
@@ -35,7 +35,7 @@ describe('images methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get(`/builds/${buildID}/images`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -47,7 +47,7 @@ describe('images methods', () => {
 			});
 		});
 
-		it('rejects on bad input', () => {
+		test('rejects on bad input', () => {
 			return instance.getImages().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');
@@ -58,7 +58,7 @@ describe('images methods', () => {
 	describe('createImage', () => {
 		const filePath = path.resolve(__dirname, '../package.json');
 
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = image;
 
 			const scope = nock()
@@ -83,7 +83,7 @@ describe('images methods', () => {
 				});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/images`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -95,28 +95,28 @@ describe('images methods', () => {
 			});
 		});
 
-		it('rejects on missing buildID', () => {
+		test('rejects on missing buildID', () => {
 			return instance.createImage(null, 'foo', filePath).catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');
 			});
 		});
 
-		it('rejects on missing name', () => {
+		test('rejects on missing name', () => {
 			return instance.createImage(buildID, null, filePath).catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('name');
 			});
 		});
 
-		it('rejects on missing filePath', () => {
+		test('rejects on missing filePath', () => {
 			return instance.createImage(buildID, 'foo', null).catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('filePath');
 			});
 		});
 
-		it('rejects on non-existent file', () => {
+		test('rejects on non-existent file', () => {
 			return instance
 				.createImage(buildID, 'foo', '/tmp/bogus.123456')
 				.catch(err => {

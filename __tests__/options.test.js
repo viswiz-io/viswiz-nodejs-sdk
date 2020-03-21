@@ -10,7 +10,7 @@ describe('options', () => {
 	};
 
 	describe('api key', () => {
-		it('uses parameter', async () => {
+		test('uses parameter', async () => {
 			const scope = nock()
 				.get('/account')
 				.matchHeader('Authorization', 'Bearer foo')
@@ -26,7 +26,7 @@ describe('options', () => {
 			expect(scope.isDone()).toBeTruthy();
 		});
 
-		it('uses env', async () => {
+		test('uses env', async () => {
 			process.env.VISWIZ_API_KEY = 'bar';
 
 			const scope = nock()
@@ -44,7 +44,7 @@ describe('options', () => {
 			expect(scope.isDone()).toBeTruthy();
 		});
 
-		it('throws error on missing value', async () => {
+		test('throws error on missing value', async () => {
 			delete process.env.VISWIZ_API_KEY;
 
 			expect(() => {

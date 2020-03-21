@@ -20,7 +20,7 @@ describe('builds methods', () => {
 	};
 
 	describe('getBuilds', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				builds: [build, build],
 			};
@@ -36,7 +36,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get(`/projects/${projectID}/builds`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -48,7 +48,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on bad input', () => {
+		test('rejects on bad input', () => {
 			return instance.getBuilds().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');
@@ -57,7 +57,7 @@ describe('builds methods', () => {
 	});
 
 	describe('createBuild', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = build;
 			const payload = {
 				branch: 'master',
@@ -80,7 +80,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const payload = {
 				branch: 'master',
 				name: 'Foo Bar',
@@ -102,7 +102,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on bad input', () => {
+		test('rejects on bad input', () => {
 			return instance.createBuild().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');
@@ -111,7 +111,7 @@ describe('builds methods', () => {
 	});
 
 	describe('finishBuild', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/finish`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -123,7 +123,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/finish`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -135,7 +135,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on bad input', () => {
+		test('rejects on bad input', () => {
 			return instance.finishBuild().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');
@@ -144,7 +144,7 @@ describe('builds methods', () => {
 	});
 
 	describe('getBuildResults', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				build: build,
 				images: [],
@@ -161,7 +161,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get(`/builds/${buildID}/results`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -173,7 +173,7 @@ describe('builds methods', () => {
 			});
 		});
 
-		it('rejects on bad input', () => {
+		test('rejects on bad input', () => {
 			return instance.getBuildResults().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');

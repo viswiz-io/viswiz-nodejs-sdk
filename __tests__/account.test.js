@@ -11,7 +11,7 @@ beforeEach(() => {
 
 describe('account methods', () => {
 	describe('getAccount', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				id: 'abcdef',
 				email: 'foo@bar.com',
@@ -28,7 +28,7 @@ describe('account methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get('/account')
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -42,7 +42,7 @@ describe('account methods', () => {
 	});
 
 	describe('getWebhooks', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				webhooks: [
 					{
@@ -63,7 +63,7 @@ describe('account methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get('/webhooks')
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -81,7 +81,7 @@ describe('account methods', () => {
 			url: 'http://foo.com/bar',
 		};
 
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				createdAt: 'now',
 				url: 'http://foo.com/bar',
@@ -98,7 +98,7 @@ describe('account methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.post('/webhooks', payload)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -110,7 +110,7 @@ describe('account methods', () => {
 			});
 		});
 
-		it('rejects on missing data', () => {
+		test('rejects on missing data', () => {
 			return instance.createWebhook().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('params');

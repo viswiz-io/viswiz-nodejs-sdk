@@ -23,7 +23,7 @@ describe('projects methods', () => {
 	};
 
 	describe('getProjects', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				projects: [project, project2],
 			};
@@ -39,7 +39,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get('/projects')
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -53,7 +53,7 @@ describe('projects methods', () => {
 	});
 
 	describe('getProject', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				projects: [project, project2],
 			};
@@ -69,7 +69,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get('/projects')
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -89,7 +89,7 @@ describe('projects methods', () => {
 			url: 'http://github.com/foo/bar',
 		};
 
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = project;
 
 			const scope = nock()
@@ -103,7 +103,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.post('/projects', payload)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -115,7 +115,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on missing data', () => {
+		test('rejects on missing data', () => {
 			return instance.createProject().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('params');
@@ -124,7 +124,7 @@ describe('projects methods', () => {
 	});
 
 	describe('getProjectNotifications', () => {
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const body = {
 				emailEnabled: true,
 				slackEnabled: false,
@@ -142,7 +142,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.get(`/projects/${projectID}/notifications`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -154,7 +154,7 @@ describe('projects methods', () => {
 			});
 		});
 
-		it('rejects on missing data', () => {
+		test('rejects on missing data', () => {
 			return instance.getProjectNotifications().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');
@@ -169,7 +169,7 @@ describe('projects methods', () => {
 			slackURL: 'http://foo.com/',
 		};
 
-		it('resolves on successfull request', () => {
+		test('resolves on successfull request', () => {
 			const scope = nock()
 				.put(`/projects/${projectID}/notifications`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -183,7 +183,7 @@ describe('projects methods', () => {
 				});
 		});
 
-		it('rejects on error request', () => {
+		test('rejects on error request', () => {
 			const scope = nock()
 				.put(`/projects/${projectID}/notifications`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -197,7 +197,7 @@ describe('projects methods', () => {
 				});
 		});
 
-		it('rejects on missing data', () => {
+		test('rejects on missing data', () => {
 			return instance.updateProjectNotifications().catch(err => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');

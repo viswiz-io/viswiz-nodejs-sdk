@@ -43,7 +43,8 @@ describe('buildFolder', () => {
 
 	['buildFolder', 'buildWithImages'].forEach(method => {
 		describe(method, () => {
-			it('resolves on success', async () => {
+			test('resolves on success', async () => {
+				const replies = [];
 				const scope = nock()
 					.post(`/projects/${projectID}/builds`, buildPayload)
 					.matchHeader('Authorization', 'Bearer foobar')
@@ -54,12 +55,27 @@ describe('buildFolder', () => {
 					.post(`/builds/${buildID}/images`, reqBody =>
 						validateRequestBody(
 							reqBody,
+							'subfolder/viswiz-favicon-48',
+							'viswiz-favicon-48.png'
+						)
+					)
+					.matchHeader('Authorization', 'Bearer foobar')
+					.reply((uri, requestBody, callback) => {
+						replies.push(Date.now());
+						setTimeout(() => callback(null, [200, image]), 50);
+					})
+					.post(`/builds/${buildID}/images`, reqBody =>
+						validateRequestBody(
+							reqBody,
 							'viswiz-100x100-white',
 							'viswiz-100x100-white.png'
 						)
 					)
 					.matchHeader('Authorization', 'Bearer foobar')
-					.reply(200, image)
+					.reply((uri, requestBody, callback) => {
+						replies.push(Date.now());
+						setTimeout(() => callback(null, [200, image]), 25);
+					})
 					.post(`/builds/${buildID}/images`, reqBody =>
 						validateRequestBody(
 							reqBody,
@@ -68,38 +84,39 @@ describe('buildFolder', () => {
 						)
 					)
 					.matchHeader('Authorization', 'Bearer foobar')
-					.reply(200, image)
-					.post(`/builds/${buildID}/images`, reqBody =>
-						validateRequestBody(
-							reqBody,
-							'subfolder/viswiz-favicon-48',
-							'viswiz-favicon-48.png'
-						)
-					)
-					.matchHeader('Authorization', 'Bearer foobar')
-					.reply(200, image)
+					.reply(200, () => {
+						replies.push(Date.now());
+						return image;
+					})
 					.post(`/builds/${buildID}/finish`)
 					.matchHeader('Authorization', 'Bearer foobar')
 					.reply(200);
 
 				const progress = jest.fn();
 
-				await instance[method](build, FIXTURES, progress);
+				await instance[method](build, FIXTURES, progress, 2);
+
+				expect(replies).toHaveLength(3);
+				// The first two requests should be performed concurrently
+				expect(replies[1] - replies[0]).toBeLessThanOrEqual(10);
+				// The third request should be performed after one of the first 2 finish
+				expect(replies[2] - replies[0]).toBeGreaterThanOrEqual(25);
 
 				expect(progress).toHaveBeenCalledTimes(3);
-				expect(progress).toHaveBeenCalledWith(1, 3);
-				expect(progress).toHaveBeenCalledWith(2, 3);
-				expect(progress).toHaveBeenCalledWith(3, 3);
+				expect(progress.mock.calls[0]).toEqual([1, 3]);
+				expect(progress.mock.calls[1]).toEqual([2, 3]);
+				expect(progress.mock.calls[2]).toEqual([3, 3]);
+
 				expect(scope.isDone()).toBeTruthy();
 			});
 
-			it('throws when no files', async () => {
+			test('throws when no files', async () => {
 				await expect(instance[method](build, __dirname)).rejects.toThrow(
 					'No image files found in image directory!'
 				);
 			});
 
-			it('rejects on error request', async () => {
+			test('rejects on error request', async () => {
 				nock()
 					.post(`/projects/${projectID}/builds`, buildPayload)
 					.matchHeader('Authorization', 'Bearer foobar')

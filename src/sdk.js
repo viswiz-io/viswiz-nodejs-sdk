@@ -3,6 +3,7 @@ import FormData from 'form-data';
 import glob from 'glob';
 import got from 'got';
 import path from 'path';
+import pMap from 'p-map';
 import pkg from '../package.json';
 
 class VisWiz {
@@ -405,6 +406,7 @@ class VisWiz {
 	 * @param {string} build.revision - The revision for this build
 	 * @param {string} folderPath
 	 * @param {function} [progressCallback] - called with parameters: (current, total)
+	 * @param {number} [concurrency] - The amount of concurrent images to upload (defaults to 4)
 	 * @returns {Promise}
 	 *
 	 * @example
@@ -415,7 +417,7 @@ class VisWiz {
 	 *   revision: '62388d1e81be184d4f255ca2354efef1e80fbfb8'
 	 * }, '/path/to/folder/with/images');
 	 */
-	async buildFolder(build, folderPath, progressCallback) {
+	async buildFolder(build, folderPath, progressCallback, concurrency = 4) {
 		const fullPath = path.resolve(folderPath);
 		const imageFiles = glob.sync(path.join(fullPath, '**/*.png'));
 		const total = imageFiles.length;
@@ -428,21 +430,27 @@ class VisWiz {
 		const buildResponse = await this.createBuild(build);
 		const buildID = buildResponse.id;
 
-		await imageFiles.reduce((chain, imageFile, index) => {
-			let name = imageFile;
-			// glob under Windows returns `/` instead of `\`
-			if (process.platform === 'win32') {
-				name = name.replace(/\//g, '\\');
-			}
-			name = name
-				.replace(fullPath, '')
-				.replace(/^[/\\]/, '')
-				.replace(/\.png$/i, '');
+		let index = 0;
 
-			return chain
-				.then(() => this.createImage(buildID, name, imageFile))
-				.then(() => progressCallback && progressCallback(index + 1, total));
-		}, Promise.resolve());
+		await pMap(
+			imageFiles,
+			imageFile => {
+				let name = imageFile;
+				// glob under Windows returns `/` instead of `\`
+				if (process.platform === 'win32') {
+					name = name.replace(/\//g, '\\');
+				}
+				name = name
+					.replace(fullPath, '')
+					.replace(/^[/\\]/, '')
+					.replace(/\.png$/i, '');
+
+				return this.createImage(buildID, name, imageFile).then(
+					() => progressCallback && progressCallback(++index, total)
+				);
+			},
+			{ concurrency }
+		);
 
 		await this.finishBuild(buildID);
 
@@ -454,8 +462,8 @@ class VisWiz {
 	 *
 	 * @method
 	 */
-	buildWithImages(build, folderPath, progressCallback) {
-		return this.buildFolder(build, folderPath, progressCallback);
+	buildWithImages(build, folderPath, progressCallback, concurrency) {
+		return this.buildFolder(build, folderPath, progressCallback, concurrency);
 	}
 }
 
