@@ -40,6 +40,7 @@ import FormData from &apos;form-data&apos;;
 import glob from &apos;glob&apos;;
 import got from &apos;got&apos;;
 import path from &apos;path&apos;;
+import pMap from &apos;p-map&apos;;
 import pkg from &apos;../package.json&apos;;
 
 class VisWiz {
@@ -442,6 +443,7 @@ class VisWiz {
 	 * @param {string} build.revision - The revision for this build
 	 * @param {string} folderPath
 	 * @param {function} [progressCallback] - called with parameters: (current, total)
+	 * @param {number} [concurrency] - The amount of concurrent images to upload (defaults to 4)
 	 * @returns {Promise}
 	 *
 	 * @example
@@ -452,7 +454,7 @@ class VisWiz {
 	 *   revision: &apos;62388d1e81be184d4f255ca2354efef1e80fbfb8&apos;
 	 * }, &apos;/path/to/folder/with/images&apos;);
 	 */
-	async buildFolder(build, folderPath, progressCallback) {
+	async buildFolder(build, folderPath, progressCallback, concurrency = 4) {
 		const fullPath = path.resolve(folderPath);
 		const imageFiles = glob.sync(path.join(fullPath, &apos;**/*.png&apos;));
 		const total = imageFiles.length;
@@ -465,21 +467,27 @@ class VisWiz {
 		const buildResponse = await this.createBuild(build);
 		const buildID = buildResponse.id;
 
-		await imageFiles.reduce((chain, imageFile, index) =&gt; {
-			let name = imageFile;
-			// glob under Windows returns `/` instead of `\`
-			if (process.platform === &apos;win32&apos;) {
-				name = name.replace(/\//g, &apos;\\&apos;);
-			}
-			name = name
-				.replace(fullPath, &apos;&apos;)
-				.replace(/^[/\\]/, &apos;&apos;)
-				.replace(/\.png$/i, &apos;&apos;);
+		let index = 0;
 
-			return chain
-				.then(() =&gt; this.createImage(buildID, name, imageFile))
-				.then(() =&gt; progressCallback &amp;&amp; progressCallback(index + 1, total));
-		}, Promise.resolve());
+		await pMap(
+			imageFiles,
+			imageFile =&gt; {
+				let name = imageFile;
+				// glob under Windows returns `/` instead of `\`
+				if (process.platform === &apos;win32&apos;) {
+					name = name.replace(/\//g, &apos;\\&apos;);
+				}
+				name = name
+					.replace(fullPath, &apos;&apos;)
+					.replace(/^[/\\]/, &apos;&apos;)
+					.replace(/\.png$/i, &apos;&apos;);
+
+				return this.createImage(buildID, name, imageFile).then(
+					() =&gt; progressCallback &amp;&amp; progressCallback(++index, total)
+				);
+			},
+			{ concurrency }
+		);
 
 		await this.finishBuild(buildID);
 
@@ -491,8 +499,8 @@ class VisWiz {
 	 *
 	 * @method
 	 */
-	buildWithImages(build, folderPath, progressCallback) {
-		return this.buildFolder(build, folderPath, progressCallback);
+	buildWithImages(build, folderPath, progressCallback, concurrency) {
+		return this.buildFolder(build, folderPath, progressCallback, concurrency);
 	}
 }
 
