@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.0.0...v5.1.0) (2020-03-21)
+
+
+### Features
+
+* Upload images concurrently ([85eaa27](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/85eaa2726a108396cd8b6ebb5bea579770a868ef))
+
+
+### Bug Fixes
+
+* Upgrade all dependencies ([90ee878](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/90ee878913a31245d63445a3925597e96c4f147a))
+
 ## [5.0.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v4.0.0...v5.0.0) (2020-02-04)
 
 ### ⚠ BREAKING CHANGES
