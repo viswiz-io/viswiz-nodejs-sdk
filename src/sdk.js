@@ -41,15 +41,19 @@ class VisWiz {
 	 * @param {string} method - http method
 	 * @param {string} path - path for the request
 	 * @param {object} body - body parameters / object
-	 * @param {object} [headers] - header parameters
+	 * @param {object} [headers] - HTTP headers for the request
+	 * @param {object} [options] - `got` options
 	 */
-	_request(method, path, body, headers) {
+	_request(method, path, body, headers, options = {}) {
 		const url = this.server + path;
-		const options = {
-			headers,
-			method,
-			retry: 0,
-		};
+
+		options.headers = headers;
+		options.method = method;
+		if (!options.retry) {
+			options.retry = {
+				limit: 0,
+			};
+		}
 
 		if (body) {
 			if (body instanceof FormData) {
@@ -391,7 +395,13 @@ class VisWiz {
 			'POST',
 			path,
 			form,
-			this._getHeaders(form.getHeaders())
+			this._getHeaders(form.getHeaders()),
+			{
+				retry: {
+					limit: 3,
+					methods: ['POST'],
+				},
+			}
 		);
 	}
 

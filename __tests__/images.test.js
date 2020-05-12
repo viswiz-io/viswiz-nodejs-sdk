@@ -59,8 +59,6 @@ describe('images methods', () => {
 		const filePath = path.resolve(__dirname, '../package.json');
 
 		test('resolves on successfull request', () => {
-			const body = image;
-
 			const scope = nock()
 				.post(`/builds/${buildID}/images`, reqBody => {
 					return (
@@ -73,17 +71,32 @@ describe('images methods', () => {
 					);
 				})
 				.matchHeader('Authorization', 'Bearer foobar')
-				.reply(200, body);
+				.reply(200, image);
 
 			return instance
 				.createImage(buildID, 'test-file-name', filePath)
 				.then(response => {
-					expect(response).toEqual(body);
+					expect(response).toEqual(image);
 					expect(scope.isDone()).toBeTruthy();
 				});
 		});
 
-		test('rejects on error request', () => {
+		test.skip('retries and resolves after a 502 error and a 200 request', () => {
+			const scope = nock()
+				.post(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
+				.reply(502)
+				.post(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
+				.reply(200, image);
+
+			return instance.createImage(buildID, 'foo', filePath).then(response => {
+				expect(response).toEqual(image);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		}, 5000);
+
+		test('rejects on 400 error request', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/images`)
 				.matchHeader('Authorization', 'Bearer foobar')
@@ -94,6 +107,19 @@ describe('images methods', () => {
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
+
+		test.skip('retries and rejects on 502 error request', () => {
+			const scope = nock()
+				.post(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
+				.times(3)
+				.reply(502);
+
+			return instance.createImage(buildID, 'foo', filePath).catch(err => {
+				expect(err.response.statusCode).toBe(502);
+				expect(scope.isDone()).toBeTruthy();
+			});
+		}, 10000);
 
 		test('rejects on missing buildID', () => {
 			return instance.createImage(null, 'foo', filePath).catch(err => {

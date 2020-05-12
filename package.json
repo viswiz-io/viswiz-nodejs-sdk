@@ -44,7 +44,7 @@
   "dependencies": {
     "form-data": "3.0.0",
     "glob": "7.1.6",
-    "got": "10.6.0",
+    "got": "10.7.0",
     "p-map": "4.0.0"
   },
   "devDependencies": {
