@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.1.0...v5.2.0) (2020-05-12)
+
+
+### Features
+
+* Retry images create requests ([119e99f](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/119e99f2ce3eb721e31518d6d43c778e171b9ced))
+
 ## [5.1.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.0.0...v5.1.0) (2020-03-21)
 
 
