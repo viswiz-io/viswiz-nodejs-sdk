@@ -145,7 +145,7 @@ class VisWiz {
 	 */
 	getWebhooks() {
 		return this._request(&apos;GET&apos;, &apos;/webhooks&apos;, null, this._getHeaders()).then(
-			results =&gt; results.webhooks
+			(results) =&gt; results.webhooks
 		);
 	}
 
@@ -184,7 +184,7 @@ class VisWiz {
 	 */
 	getProjects() {
 		return this._request(&apos;GET&apos;, &apos;/projects&apos;, null, this._getHeaders()).then(
-			results =&gt; results.projects
+			(results) =&gt; results.projects
 		);
 	}
 
@@ -200,8 +200,8 @@ class VisWiz {
 	 * const project = await client.getProject(projectID);
 	 */
 	getProject(projectID) {
-		return this.getProjects().then(projects =&gt;
-			projects.find(item =&gt; item.id === projectID)
+		return this.getProjects().then((projects) =&gt;
+			projects.find((item) =&gt; item.id === projectID)
 		);
 	}
 
@@ -297,7 +297,7 @@ class VisWiz {
 		const path = `/projects/${projectID}/builds`;
 
 		return this._request(&apos;GET&apos;, path, null, this._getHeaders()).then(
-			results =&gt; results.builds
+			(results) =&gt; results.builds
 		);
 	}
 
@@ -435,7 +435,7 @@ class VisWiz {
 			this._getHeaders(form.getHeaders()),
 			{
 				retry: {
-					limit: 3,
+					limit: 2,
 					methods: [&apos;POST&apos;],
 				},
 			}
@@ -481,7 +481,7 @@ class VisWiz {
 
 		await pMap(
 			imageFiles,
-			imageFile =&gt; {
+			(imageFile) =&gt; {
 				let name = imageFile;
 				// glob under Windows returns `/` instead of `\`
 				if (process.platform === &apos;win32&apos;) {
