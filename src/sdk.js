@@ -25,9 +25,7 @@ class VisWiz {
 	constructor(apiKey, options) {
 		this.apiKey = apiKey || process.env.VISWIZ_API_KEY;
 		this.server =
-			(options && options.server) ||
-			process.env.VISWIZ_SERVER ||
-			'https://api.viswiz.io';
+			(options && options.server) || process.env.VISWIZ_SERVER || 'https://api.viswiz.io';
 
 		if (!this.apiKey) {
 			throw new Error('Missing API key value!');
@@ -108,7 +106,7 @@ class VisWiz {
 	 */
 	getWebhooks() {
 		return this._request('GET', '/webhooks', null, this._getHeaders()).then(
-			(results) => results.webhooks
+			results => results.webhooks
 		);
 	}
 
@@ -147,7 +145,7 @@ class VisWiz {
 	 */
 	getProjects() {
 		return this._request('GET', '/projects', null, this._getHeaders()).then(
-			(results) => results.projects
+			results => results.projects
 		);
 	}
 
@@ -163,9 +161,7 @@ class VisWiz {
 	 * const project = await client.getProject(projectID);
 	 */
 	getProject(projectID) {
-		return this.getProjects().then((projects) =>
-			projects.find((item) => item.id === projectID)
-		);
+		return this.getProjects().then(projects => projects.find(item => item.id === projectID));
 	}
 
 	/**
@@ -259,9 +255,7 @@ class VisWiz {
 
 		const path = `/projects/${projectID}/builds`;
 
-		return this._request('GET', path, null, this._getHeaders()).then(
-			(results) => results.builds
-		);
+		return this._request('GET', path, null, this._getHeaders()).then(results => results.builds);
 	}
 
 	/**
@@ -391,18 +385,12 @@ class VisWiz {
 		form.append('name', name);
 		form.append('image', fs.createReadStream(filePath));
 
-		return this._request(
-			'POST',
-			path,
-			form,
-			this._getHeaders(form.getHeaders()),
-			{
-				retry: {
-					limit: 2,
-					methods: ['POST'],
-				},
-			}
-		);
+		return this._request('POST', path, form, this._getHeaders(form.getHeaders()), {
+			retry: {
+				limit: 2,
+				methods: ['POST'],
+			},
+		});
 	}
 
 	/**
@@ -432,9 +420,7 @@ class VisWiz {
 		const imageFiles = glob.sync(path.join(fullPath, '**/*.png'));
 		const total = imageFiles.length;
 		if (!total) {
-			return Promise.reject(
-				new Error('No image files found in image directory!')
-			);
+			return Promise.reject(new Error('No image files found in image directory!'));
 		}
 
 		const buildResponse = await this.createBuild(build);
@@ -444,7 +430,7 @@ class VisWiz {
 
 		await pMap(
 			imageFiles,
-			(imageFile) => {
+			imageFile => {
 				let name = imageFile;
 				// glob under Windows returns `/` instead of `\`
 				if (process.platform === 'win32') {

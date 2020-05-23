@@ -10,9 +10,7 @@ function validateRequestBody(body, fileName, imageName) {
 	return (
 		raw.includes('Content-Disposition: form-data; name="name"') &&
 		raw.includes(fileName) &&
-		raw.includes(
-			`Content-Disposition: form-data; name="image"; filename="${imageName}"`
-		)
+		raw.includes(`Content-Disposition: form-data; name="image"; filename="${imageName}"`)
 	);
 }
 
@@ -41,7 +39,7 @@ describe('buildFolder', () => {
 		thumbURL: 'http://foo.com/bar-thumb.png',
 	};
 
-	['buildFolder', 'buildWithImages'].forEach((method) => {
+	['buildFolder', 'buildWithImages'].forEach(method => {
 		describe(method, () => {
 			test('resolves on success', async () => {
 				const replies = [];
@@ -52,36 +50,24 @@ describe('buildFolder', () => {
 						id: buildID,
 						...build,
 					})
-					.post(`/builds/${buildID}/images`, (reqBody) =>
-						validateRequestBody(
-							reqBody,
-							'subfolder/viswiz-favicon-48',
-							'viswiz-favicon-48.png'
-						)
+					.post(`/builds/${buildID}/images`, reqBody =>
+						validateRequestBody(reqBody, 'subfolder/viswiz-favicon-48', 'viswiz-favicon-48.png')
 					)
 					.matchHeader('Authorization', 'Bearer foobar')
 					.reply((uri, requestBody, callback) => {
 						replies.push(Date.now());
 						setTimeout(() => callback(null, [200, image]), 50);
 					})
-					.post(`/builds/${buildID}/images`, (reqBody) =>
-						validateRequestBody(
-							reqBody,
-							'viswiz-100x100-white',
-							'viswiz-100x100-white.png'
-						)
+					.post(`/builds/${buildID}/images`, reqBody =>
+						validateRequestBody(reqBody, 'viswiz-100x100-white', 'viswiz-100x100-white.png')
 					)
 					.matchHeader('Authorization', 'Bearer foobar')
 					.reply((uri, requestBody, callback) => {
 						replies.push(Date.now());
 						setTimeout(() => callback(null, [200, image]), 25);
 					})
-					.post(`/builds/${buildID}/images`, (reqBody) =>
-						validateRequestBody(
-							reqBody,
-							'viswiz-favicon-32',
-							'viswiz-favicon-32.png'
-						)
+					.post(`/builds/${buildID}/images`, reqBody =>
+						validateRequestBody(reqBody, 'viswiz-favicon-32', 'viswiz-favicon-32.png')
 					)
 					.matchHeader('Authorization', 'Bearer foobar')
 					.reply(200, () => {
