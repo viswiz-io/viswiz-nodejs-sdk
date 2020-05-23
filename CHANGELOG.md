@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.2.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.2.0...v5.2.1) (2020-05-23)
+
+
+### Bug Fixes
+
+* Upgrade all dependencies ([5c11546](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/5c1154671c8e586ae1b162d0fa56666f3ed15055))
+
 ## [5.2.0](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.1.0...v5.2.0) (2020-05-12)
 
 
