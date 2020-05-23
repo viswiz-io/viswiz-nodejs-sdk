@@ -33,7 +33,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getProjects().then(response => {
+			return instance.getProjects().then((response) => {
 				expect(response).toEqual(body.projects);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -45,7 +45,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProjects().catch(err => {
+			return instance.getProjects().catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -63,7 +63,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getProject(project.id).then(response => {
+			return instance.getProject(project.id).then((response) => {
 				expect(response).toEqual(project);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -75,7 +75,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProject(project.id).catch(err => {
+			return instance.getProject(project.id).catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -97,7 +97,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.createProject(payload).then(response => {
+			return instance.createProject(payload).then((response) => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -109,14 +109,14 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createProject(payload).catch(err => {
+			return instance.createProject(payload).catch((err) => {
 				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
 
 		test('rejects on missing data', () => {
-			return instance.createProject().catch(err => {
+			return instance.createProject().catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('params');
 			});
@@ -136,7 +136,7 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getProjectNotifications(projectID).then(response => {
+			return instance.getProjectNotifications(projectID).then((response) => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -148,14 +148,14 @@ describe('projects methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getProjectNotifications(projectID).catch(err => {
+			return instance.getProjectNotifications(projectID).catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
 
 		test('rejects on missing data', () => {
-			return instance.getProjectNotifications().catch(err => {
+			return instance.getProjectNotifications().catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');
 			});
@@ -177,7 +177,7 @@ describe('projects methods', () => {
 
 			return instance
 				.updateProjectNotifications(projectID, notifications)
-				.then(response => {
+				.then((response) => {
 					expect(response).toEqual(notifications);
 					expect(scope.isDone()).toBeTruthy();
 				});
@@ -191,14 +191,14 @@ describe('projects methods', () => {
 
 			return instance
 				.updateProjectNotifications(projectID, notifications)
-				.catch(err => {
+				.catch((err) => {
 					expect(err.response.statusCode).toBe(401);
 					expect(scope.isDone()).toBeTruthy();
 				});
 		});
 
 		test('rejects on missing data', () => {
-			return instance.updateProjectNotifications().catch(err => {
+			return instance.updateProjectNotifications().catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('projectID');
 			});

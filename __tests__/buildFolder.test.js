@@ -41,7 +41,7 @@ describe('buildFolder', () => {
 		thumbURL: 'http://foo.com/bar-thumb.png',
 	};
 
-	['buildFolder', 'buildWithImages'].forEach(method => {
+	['buildFolder', 'buildWithImages'].forEach((method) => {
 		describe(method, () => {
 			test('resolves on success', async () => {
 				const replies = [];
@@ -52,7 +52,7 @@ describe('buildFolder', () => {
 						id: buildID,
 						...build,
 					})
-					.post(`/builds/${buildID}/images`, reqBody =>
+					.post(`/builds/${buildID}/images`, (reqBody) =>
 						validateRequestBody(
 							reqBody,
 							'subfolder/viswiz-favicon-48',
@@ -64,7 +64,7 @@ describe('buildFolder', () => {
 						replies.push(Date.now());
 						setTimeout(() => callback(null, [200, image]), 50);
 					})
-					.post(`/builds/${buildID}/images`, reqBody =>
+					.post(`/builds/${buildID}/images`, (reqBody) =>
 						validateRequestBody(
 							reqBody,
 							'viswiz-100x100-white',
@@ -76,7 +76,7 @@ describe('buildFolder', () => {
 						replies.push(Date.now());
 						setTimeout(() => callback(null, [200, image]), 25);
 					})
-					.post(`/builds/${buildID}/images`, reqBody =>
+					.post(`/builds/${buildID}/images`, (reqBody) =>
 						validateRequestBody(
 							reqBody,
 							'viswiz-favicon-32',

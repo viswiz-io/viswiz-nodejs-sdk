@@ -108,7 +108,7 @@ class VisWiz {
 	 */
 	getWebhooks() {
 		return this._request('GET', '/webhooks', null, this._getHeaders()).then(
-			results => results.webhooks
+			(results) => results.webhooks
 		);
 	}
 
@@ -147,7 +147,7 @@ class VisWiz {
 	 */
 	getProjects() {
 		return this._request('GET', '/projects', null, this._getHeaders()).then(
-			results => results.projects
+			(results) => results.projects
 		);
 	}
 
@@ -163,8 +163,8 @@ class VisWiz {
 	 * const project = await client.getProject(projectID);
 	 */
 	getProject(projectID) {
-		return this.getProjects().then(projects =>
-			projects.find(item => item.id === projectID)
+		return this.getProjects().then((projects) =>
+			projects.find((item) => item.id === projectID)
 		);
 	}
 
@@ -260,7 +260,7 @@ class VisWiz {
 		const path = `/projects/${projectID}/builds`;
 
 		return this._request('GET', path, null, this._getHeaders()).then(
-			results => results.builds
+			(results) => results.builds
 		);
 	}
 
@@ -398,7 +398,7 @@ class VisWiz {
 			this._getHeaders(form.getHeaders()),
 			{
 				retry: {
-					limit: 3,
+					limit: 2,
 					methods: ['POST'],
 				},
 			}
@@ -444,7 +444,7 @@ class VisWiz {
 
 		await pMap(
 			imageFiles,
-			imageFile => {
+			(imageFile) => {
 				let name = imageFile;
 				// glob under Windows returns `/` instead of `\`
 				if (process.platform === 'win32') {

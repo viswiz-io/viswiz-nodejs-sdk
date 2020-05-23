@@ -22,7 +22,7 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getAccount().then(response => {
+			return instance.getAccount().then((response) => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -34,7 +34,7 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getAccount().catch(err => {
+			return instance.getAccount().catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -57,7 +57,7 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getWebhooks().then(response => {
+			return instance.getWebhooks().then((response) => {
 				expect(response).toEqual(body.webhooks);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -69,7 +69,7 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getWebhooks().catch(err => {
+			return instance.getWebhooks().catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -92,7 +92,7 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.createWebhook(payload).then(response => {
+			return instance.createWebhook(payload).then((response) => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -104,14 +104,14 @@ describe('account methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createWebhook(payload).catch(err => {
+			return instance.createWebhook(payload).catch((err) => {
 				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
 
 		test('rejects on missing data', () => {
-			return instance.createWebhook().catch(err => {
+			return instance.createWebhook().catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('params');
 			});

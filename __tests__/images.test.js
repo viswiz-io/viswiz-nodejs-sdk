@@ -29,7 +29,7 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, body);
 
-			return instance.getImages(buildID).then(response => {
+			return instance.getImages(buildID).then((response) => {
 				expect(response).toEqual(body);
 				expect(scope.isDone()).toBeTruthy();
 			});
@@ -41,14 +41,14 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(401);
 
-			return instance.getImages(buildID).catch(err => {
+			return instance.getImages(buildID).catch((err) => {
 				expect(err.response.statusCode).toBe(401);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
 
 		test('rejects on bad input', () => {
-			return instance.getImages().catch(err => {
+			return instance.getImages().catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');
 			});
@@ -60,7 +60,7 @@ describe('images methods', () => {
 
 		test('resolves on successfull request', () => {
 			const scope = nock()
-				.post(`/builds/${buildID}/images`, reqBody => {
+				.post(`/builds/${buildID}/images`, (reqBody) => {
 					return (
 						reqBody.match(/Content-Disposition: form-data; name="name"/) &&
 						reqBody.match(/test-file-name/) &&
@@ -75,14 +75,17 @@ describe('images methods', () => {
 
 			return instance
 				.createImage(buildID, 'test-file-name', filePath)
-				.then(response => {
+				.then((response) => {
 					expect(response).toEqual(image);
 					expect(scope.isDone()).toBeTruthy();
 				});
 		});
 
-		test.skip('retries and resolves after a 502 error and a 200 request', () => {
+		test('retries and resolves after two 502 error and a 200 request', () => {
 			const scope = nock()
+				.post(`/builds/${buildID}/images`)
+				.matchHeader('Authorization', 'Bearer foobar')
+				.reply(502)
 				.post(`/builds/${buildID}/images`)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(502)
@@ -90,11 +93,11 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(200, image);
 
-			return instance.createImage(buildID, 'foo', filePath).then(response => {
+			return instance.createImage(buildID, 'foo', filePath).then((response) => {
 				expect(response).toEqual(image);
 				expect(scope.isDone()).toBeTruthy();
 			});
-		}, 5000);
+		}, 10000);
 
 		test('rejects on 400 error request', () => {
 			const scope = nock()
@@ -102,41 +105,41 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createImage(buildID, 'foo', filePath).catch(err => {
+			return instance.createImage(buildID, 'foo', filePath).catch((err) => {
 				expect(err.response.statusCode).toBe(400);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		});
 
-		test.skip('retries and rejects on 502 error request', () => {
+		test('retries and rejects on 502 error requests', () => {
 			const scope = nock()
 				.post(`/builds/${buildID}/images`)
 				.matchHeader('Authorization', 'Bearer foobar')
 				.times(3)
 				.reply(502);
 
-			return instance.createImage(buildID, 'foo', filePath).catch(err => {
+			return instance.createImage(buildID, 'foo', filePath).catch((err) => {
 				expect(err.response.statusCode).toBe(502);
 				expect(scope.isDone()).toBeTruthy();
 			});
 		}, 10000);
 
 		test('rejects on missing buildID', () => {
-			return instance.createImage(null, 'foo', filePath).catch(err => {
+			return instance.createImage(null, 'foo', filePath).catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('buildID');
 			});
 		});
 
 		test('rejects on missing name', () => {
-			return instance.createImage(buildID, null, filePath).catch(err => {
+			return instance.createImage(buildID, null, filePath).catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('name');
 			});
 		});
 
 		test('rejects on missing filePath', () => {
-			return instance.createImage(buildID, 'foo', null).catch(err => {
+			return instance.createImage(buildID, 'foo', null).catch((err) => {
 				expect(err).toBeTruthy();
 				expect(err.message).toMatch('filePath');
 			});
@@ -145,7 +148,7 @@ describe('images methods', () => {
 		test('rejects on non-existent file', () => {
 			return instance
 				.createImage(buildID, 'foo', '/tmp/bogus.123456')
-				.catch(err => {
+				.catch((err) => {
 					expect(err).toBeTruthy();
 					expect(err.message).toMatch('File not found');
 				});
