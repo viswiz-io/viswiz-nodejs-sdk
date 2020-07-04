@@ -48,10 +48,7 @@ describe('images methods', () => {
 		});
 
 		test('rejects on bad input', () => {
-			return instance.getImages().catch(err => {
-				expect(err).toBeTruthy();
-				expect(err.message).toMatch('buildID');
-			});
+			return expect(instance.getImages()).rejects.toThrow('buildID');
 		});
 	});
 
@@ -103,10 +100,15 @@ describe('images methods', () => {
 				.matchHeader('Authorization', 'Bearer foobar')
 				.reply(400);
 
-			return instance.createImage(buildID, 'foo', filePath).catch(err => {
-				expect(err.response.statusCode).toBe(400);
-				expect(scope.isDone()).toBeTruthy();
-			});
+			return instance
+				.createImage(buildID, 'foo', filePath)
+				.then(() => {
+					expect(true).toBeFalse();
+				})
+				.catch(err => {
+					expect(err.response.statusCode).toBe(400);
+					expect(scope.isDone()).toBeTruthy();
+				});
 		});
 
 		test('retries and rejects on 502 error requests', () => {
@@ -123,31 +125,29 @@ describe('images methods', () => {
 		}, 10000);
 
 		test('rejects on missing buildID', () => {
-			return instance.createImage(null, 'foo', filePath).catch(err => {
-				expect(err).toBeTruthy();
-				expect(err.message).toMatch('buildID');
-			});
+			return expect(instance.createImage(null, 'foo', filePath)).rejects.toThrow('buildID');
 		});
 
 		test('rejects on missing name', () => {
-			return instance.createImage(buildID, null, filePath).catch(err => {
-				expect(err).toBeTruthy();
-				expect(err.message).toMatch('name');
-			});
+			return expect(instance.createImage(buildID, null, filePath)).rejects.toThrow('name');
 		});
 
 		test('rejects on missing filePath', () => {
-			return instance.createImage(buildID, 'foo', null).catch(err => {
-				expect(err).toBeTruthy();
-				expect(err.message).toMatch('filePath');
-			});
+			return expect(instance.createImage(buildID, 'foo', null)).rejects.toThrow('filePath');
 		});
 
 		test('rejects on non-existent file', () => {
-			return instance.createImage(buildID, 'foo', '/tmp/bogus.123456').catch(err => {
-				expect(err).toBeTruthy();
-				expect(err.message).toMatch('File not found');
-			});
+			return expect(instance.createImage(buildID, 'foo', '/tmp/bogus.123456')).rejects.toThrow(
+				'File not found'
+			);
 		});
+
+		test('retries and rejects on DNS errors', () => {
+			const server = 'http://fake.viswiz.io';
+
+			instance = new VisWiz('foobar', { server });
+
+			return expect(instance.createImage(buildID, 'foo', filePath)).rejects.toThrow('ENOTFOUND');
+		}, 10000);
 	});
 });

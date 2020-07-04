@@ -37,13 +37,13 @@ class VisWiz {
 	 *
 	 * @private
 	 * @param {string} method - http method
-	 * @param {string} path - path for the request
+	 * @param {string} endpoint - endpoint for the request
 	 * @param {object} body - body parameters / object
 	 * @param {object} [headers] - HTTP headers for the request
 	 * @param {object} [options] - `got` options
 	 */
-	_request(method, path, body, headers, options = {}) {
-		const url = this.server + path;
+	_request(method, endpoint, body, headers, options = {}) {
+		const url = this.server + endpoint;
 
 		options.headers = headers;
 		options.method = method;
@@ -55,7 +55,13 @@ class VisWiz {
 
 		if (body) {
 			if (body instanceof FormData) {
-				options.body = body;
+				// `form-data` has a stream bug: https://github.com/sindresorhus/got/issues/1340
+				// so we're using it as a Buffer here
+				options.headers = {
+					...options.headers,
+					...body.getHeaders(),
+				};
+				options.body = body.getBuffer();
 			} else {
 				options.json = body;
 			}
@@ -203,9 +209,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		const path = `/projects/${projectID}/notifications`;
-
-		return this._request('GET', path, null, this._getHeaders());
+		return this._request('GET', `/projects/${projectID}/notifications`, null, this._getHeaders());
 	}
 
 	/**
@@ -232,9 +236,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		const path = `/projects/${projectID}/notifications`;
-
-		return this._request('PUT', path, params, this._getHeaders());
+		return this._request('PUT', `/projects/${projectID}/notifications`, params, this._getHeaders());
 	}
 
 	/**
@@ -253,9 +255,9 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		const path = `/projects/${projectID}/builds`;
-
-		return this._request('GET', path, null, this._getHeaders()).then(results => results.builds);
+		return this._request('GET', `/projects/${projectID}/builds`, null, this._getHeaders()).then(
+			results => results.builds
+		);
 	}
 
 	/**
@@ -283,11 +285,9 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: projectID'));
 		}
 
-		const path = `/projects/${build.projectID}/builds`;
-
 		const { projectID, ...body } = build;
 
-		return this._request('POST', path, body, this._getHeaders());
+		return this._request('POST', `/projects/${build.projectID}/builds`, body, this._getHeaders());
 	}
 
 	/**
@@ -305,9 +305,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
 		}
 
-		const path = `/builds/${buildID}/finish`;
-
-		return this._request('POST', path, null, this._getHeaders());
+		return this._request('POST', `/builds/${buildID}/finish`, null, this._getHeaders());
 	}
 
 	/**
@@ -326,9 +324,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
 		}
 
-		const path = `/builds/${buildID}/results`;
-
-		return this._request('GET', path, null, this._getHeaders());
+		return this._request('GET', `/builds/${buildID}/results`, null, this._getHeaders());
 	}
 
 	/**
@@ -347,9 +343,7 @@ class VisWiz {
 			return Promise.reject(new Error('Missing required parameter: buildID'));
 		}
 
-		const path = `/builds/${buildID}/images`;
-
-		return this._request('GET', path, null, this._getHeaders());
+		return this._request('GET', `/builds/${buildID}/images`, null, this._getHeaders());
 	}
 
 	/**
@@ -379,18 +373,24 @@ class VisWiz {
 			return Promise.reject(new Error('File not found: ' + filePath));
 		}
 
-		const path = `/builds/${buildID}/images`;
-
 		const form = new FormData();
 		form.append('name', name);
-		form.append('image', fs.createReadStream(filePath));
-
-		return this._request('POST', path, form, this._getHeaders(form.getHeaders()), {
-			retry: {
-				limit: 2,
-				methods: ['POST'],
-			},
+		form.append('image', fs.readFileSync(filePath), {
+			filename: path.basename(filePath),
 		});
+
+		return this._request(
+			'POST',
+			`/builds/${buildID}/images`,
+			form,
+			this._getHeaders(form.getHeaders()),
+			{
+				retry: {
+					limit: 2,
+					methods: ['POST'],
+				},
+			}
+		);
 	}
 
 	/**
