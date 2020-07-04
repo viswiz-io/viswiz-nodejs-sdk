@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.2.2](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.2.1...v5.2.2) (2020-07-04)
+
+
+### Bug Fixes
+
+* Retry images without streams ([4c33903](https://github.com/viswiz-io/viswiz-nodejs-sdk/commit/4c33903caf1962bdfd4198a37fbb750b7d81b5f5))
+
 ### [5.2.1](https://github.com/viswiz-io/viswiz-nodejs-sdk/compare/v5.2.0...v5.2.1) (2020-05-23)
 
 

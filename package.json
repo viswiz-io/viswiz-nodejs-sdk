@@ -1,7 +1,7 @@
 {
   "name": "viswiz-sdk",
   "description": "The VisWiz.io Node.js SDK",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "main": "index.js",
   "module": "es.js",
   "author": "Valentin Agachi <valentin@viswiz.io>",
